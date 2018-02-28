@@ -5,6 +5,7 @@ html, body {
 body {
     padding: 0px;
     margin: 0px;
+    font-family: 'Roboto Condensed', sans-serif;
 }
 h1,h2,h3,h4,h5,h6 {
     margin: 0px;
@@ -65,12 +66,27 @@ main h1{
   -webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
 }
+#particles-js h1{
+  background: transparent;
+  position: absolute;
+  margin-top: 169px;
+  margin-left: 169px;
+  font-size:60px;
+}
+#particles-js h5{
+  background: transparent;
+  position: absolute;
+  margin-top: 250px;
+  margin-left: 169px;
+  font-size:20px;
+}
 #aboutMe{
   margin-top: 42px;
 }
 #aboutMe h1{
   margin: 0 auto;
   text-align: center;
+
 }
 #aboutMe section{
   width: 50%;
