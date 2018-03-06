@@ -5,6 +5,8 @@
     <title>Adrián Mariscal</title>
     <link rel="stylesheet" href="css/general.css">
     <link rel="stylesheet" href="css/palette.css">
+    <script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" src="js/general.js"></script>
   </head>
   <body class="light-primary-color primary-text-color">
     <header class="site-header dark-text-color">
@@ -49,7 +51,7 @@
           </p>
         </section>
     </div>
-    <div id="Certificaciones">
+    <div id="certifications">
       <h1>Certificaciones</h1>
       <section>
         <h3>GIT & GITHUB</h3>
@@ -57,17 +59,62 @@
         <label class="button" for="gitGithub"></label>
         <img id="gitGithub"  src="images/diploma-git-github-1.jpg"/>
       </section>
+    </div>
+    <div id="works"/>
+      <h1>Algunos trabajos y proyectos</h1>
       <section>
-        <h3>GIT & GITHUB2</h3>
-        <input type="checkbox" id="gitGithub2" />
-        <label class="button" for="gitGithub2"></label>
-        <img id="gitGithub2"  src="images/diploma-git-github-1.jpg"/>
+      </section>
+    </div>
+    <div id="contact"/>
+      <h1>Contacto</h1>
+      <section>
+        <form id="myform" method="post">
+          <label id="labelName">Nombre</label>
+          <input id="inputName" type="text" name="name" />
+          <label>Correo electrónico</label>
+          <input type="email" name="email" />
+          <label>Asunto</label>
+          <input type="text" name="subject" />
+          <label>Mensaje</label>
+          <textarea type="textarea" name="message"></textarea>
+          <br><br>
+          <button>
+          Enviar
+          </button>
+        </form>
       </section>
     </div>
     </main>
-    <script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
+    <footer>
+      Esto es el pie
+    </footer>
     <script type="text/javascript" src="js/particles.js"></script>
     <script type="text/javascript" src="js/app.js"></script>
-    <script type="text/javascript" src="js/general.js"></script>
+    <script type="text/javascript" src="https://cdn.emailjs.com/dist/email.min.js"></script>
+    <script type="text/javascript">
+     (function(){
+        emailjs.init("user_rmN9FpVq27H9u7nUjUuC8");
+     })();
+    </script>
+    <script>
+    var myform = $("form#myform");
+    myform.submit(function(event){
+    	event.preventDefault();
+
+      // Change to your service ID, or keep using the default service
+      var service_id = "default_service";
+      var template_id = "default";
+
+      myform.find("button").text("Enviando...");
+      emailjs.sendForm(service_id,template_id,"myform")
+      	.then(function(){
+           myform.find("button").text("Enviado");
+        }, function(err) {
+           alert("Error al enviar el mensaje. Vuelva a intentarlo mas tarde");
+           myform.find("button").text("Enviar");
+        });
+      return false;
+    });
+    </script>
   </body>
 </html>
