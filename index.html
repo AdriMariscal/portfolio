@@ -12,11 +12,11 @@
     <header class="site-header dark-text-color">
       <nav>
         <ul>
-          <li><a href="#">Inicio</a></li>
-          <li><a href="#">Quién soy</a></li>
-          <li><a href="#">Certificaciones</a></li>
-          <li><a href="#">Trabajos</a></li>
-          <li><a href="#">Contacto</a></li>
+          <li><a href="#particles-js">Inicio</a></li>
+          <li><a href="#aboutMe">Quién soy</a></li>
+          <li><a href="#certifications">Certificaciones</a></li>
+          <li><a href="#works">Trabajos</a></li>
+          <li><a href="#contact">Contacto</a></li>
         </ul>
       </nav>
     </header>
@@ -28,41 +28,80 @@
     <div id="aboutMe">
         <h1>Quien soy</h1>
         <section>
-          <h3>Soy el puto amo</h3>
+          <h3>Me llamo Adrián, y soy programador</h3>
           <p>
-            Soy un español viviendo en Liverpool, que es el puto amo programando. Si necesitas una aplicacion, una web, código backend, o cualquier otra cosa relacionada con el desarrollo de software no dudes en contar conmigo.
+            Soy un programador español viviendo en Liverpool. La programación me permite ponerme metas y superarlas, y eso me encanta. La sensación de satisfacción al resolver un problema es fantástica.
           </p>
           <p>
             Tengo conocimientos en muchas areas del desarrollo, como java, android, salesforce, javascript, php, etc.
           </p>
           <p>
-            Y si desconozco la técnologia que necesitas, no te preocupes, te dire que la conozco y la aprenderé por el camino. Y sí no le robo el código a alguien, el 90% de esta pagina esta copiado y pegado.
+            Por lo que puedo trabajar en cualquier tipo de proyectos: desarrollo web, backend, frontend, aplicaciones para móviles (android y apple), CMSs, etc.
           </p>
           <p>
-            Confía en mí, esta todo under control.
+            Sí tienes en mente un nuevo proyecto, necesitas mantenimiento o mejoras en tu apliación, o simplemente quieres darle un nuevo diseño a tu web, no dues en contactar conmigo.
           </p>
-          <br/>
           <p>
-            PD: Como ves tambien sé inglés.
+            Mi idioma nativo es el español,  pero también hablo inglés.
           </p>
-          <br/>
           <p>
-            PD2:Esa última frase rima, por lo que si necesitas un poema también puedo hacerlo.
+            Sí quieres contactar conmigo, sólo tienes que enviarme un <a href="#contact">correo electrónico</a> desde el formulario al final de la web. También puedes encontrarme en <a href="https://twitter.com/Inraad">Twitter</a>, <a href="https://www.linkedin.com/in/adrian-mariscal-089b4b79/">Linkeding</a> o <a href="https://www.freelancer.com/u/Inraad">Freelancer</a>.
           </p>
+        </section>
+        <section>
+          <h3>Mis habilidades</h3>
+          <div>
+            <label>Desarrollo Web</label>
+              <div class="progressBar">
+                <div class="progress" style="height:12px;width:80%"></div>
+              </div>
+          </div>
+          <div>
+            <label>Apliaciones móviles</label>
+              <div class="progressBar">
+                <div class="progress" style="height:12px;width:75%"></div>
+              </div>
+          </div>
+          <div>
+            <label>Backend</label>
+              <div class="progressBar">
+                <div class="progress" style="height:12px;width:85%"></div>
+              </div>
+          </div>
+          <div>
+            <label>Frontend</label>
+              <div class="progressBar">
+                <div class="progress" style="height:12px;width:70%"></div>
+              </div>
+          </div>
         </section>
     </div>
     <div id="certifications">
       <h1>Certificaciones</h1>
       <section>
+        <h3>Técnico Superior en DAW</h3>
+        <input type="checkbox" id="daw" />
+        <label class="button" for="daw"></label>
+          <img id="daw"  src="images/daw.jpg"/>
+      </section>
+      <section>
         <h3>GIT & GITHUB</h3>
         <input type="checkbox" id="gitGithub" />
         <label class="button" for="gitGithub"></label>
-        <img id="gitGithub"  src="images/diploma-git-github-1.jpg"/>
+        <img id="gitGithub"  src="images/github.jpg"/>
       </section>
     </div>
     <div id="works"/>
       <h1>Algunos trabajos y proyectos</h1>
       <section>
+        <h3><a href="https://thegiftgazebo.co.uk/">The Gift Gazeboo</a></h3>
+          <p>
+            The Gift Gazeboo es una tienda online dedicada a la venta de regalos originales.
+          </p>
+          <p>
+             Esta desarrollada, con wordpress y woocommerce. Trabaje en la instalación y adaptación del tema y los pluggins, ademas del desarrollo de pequeñas funcionalidades.
+          </p>
+          <a href="https://thegiftgazebo.co.uk/"><img src="images/theGiftGazeboo.png"/></a>
       </section>
     </div>
     <div id="contact"/>
@@ -97,8 +136,8 @@
      })();
     </script>
     <script>
-    var myform = $("form#myform");
-    myform.submit(function(event){
+      var myform = $("form#myform");
+      myform.submit(function(event){
     	event.preventDefault();
 
       // Change to your service ID, or keep using the default service
@@ -114,6 +153,38 @@
            myform.find("button").text("Enviar");
         });
       return false;
+    });
+    </script>
+    <script>
+    $("a").on('click', function (event) {
+        // Make sure this.hash has a value before overriding default behavior
+        if (this.hash !== "") {
+            // Prevent default anchor click behavior
+            event.preventDefault();
+            // Store hash
+            var hash = this.hash;
+            // Using jQuery's animate() method to add smooth page scroll
+            // The optional number (800) specifies the number of milliseconds it takes to scroll to the specified area
+            $('html, body').animate({
+                scrollTop: $(hash).offset().top
+            }, 1200, function () {
+                // Add hash (#) to URL when done scrolling (default click behavior)
+                window.location.hash = hash;
+            });
+        } // End if
+    });
+    $('.scrolltotop').fadeOut(1000);
+    $(window).on('scroll', function () {
+        if ($(this).scrollTop() > 500) {
+            $('.scrolltotop').fadeIn(1000);
+        } else {
+            $('.scrolltotop').fadeOut(1000);
+        }
+    });
+    $('.scrolltotop').on('click', function () {
+        $('html,body').animate({
+            scrollTop: 0
+        }, 1000);
     });
     </script>
   </body>

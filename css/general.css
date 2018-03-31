@@ -13,6 +13,10 @@ h1,h2,h3,h4,h5,h6 {
     padding: 0px;
 }
 
+a{
+  color: #607D8B;
+}
+
 /* HEADER */
 header nav ul{
   float: right;
@@ -25,7 +29,7 @@ header nav ul li{
   text-transform: uppercase;
   font-size: 0.9em;
 }
-a,a:hover,a:focus {
+header a,header a:hover,header a:focus {
     color: inherit;
     margin: 0px;
     padding: 0px;
@@ -82,7 +86,8 @@ a,a:hover,a:focus {
 
 /* SECTIONS */
 #aboutMe,#certifications,#works,#contact{
-  padding: 35px 0;
+  padding: 3em 0 35px;
+  min-height: 100vh;
   background-position: bottom center;
   -webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
@@ -91,11 +96,12 @@ a,a:hover,a:focus {
 }
 #aboutMe h1,#certifications h1,#works h1,#contact h1{
   margin: 0 auto;
+  padding-top: 20px;
   text-align: center;
 }
 #aboutMe section,#certifications section, #works section{
   width: 45%;
-  margin: 0 5% 0 0;
+  margin: 0 2.5% 0;
   position: relative;
   float: left;
 }
@@ -107,10 +113,21 @@ a,a:hover,a:focus {
 #aboutMe p{
   margin: 0.7em 10em;
 }
-
+#aboutMe section .progressBar{
+  color: #000!important;
+  background-color: #f1f1f1!important;
+  margin-bottom: 15px;
+}
+#aboutMe section .progress{
+  color: #000!important;
+  background-color: #9e9e9e!important;
+}
 /* CERTIFICATIONS */
 #certifications{
   height: auto;
+  overflow-y:hidden;
+}#certifications section{
+ margin-bottom: 40px;
 }
 #certifications h3{
   margin: 20px 10em;
@@ -125,6 +142,13 @@ a,a:hover,a:focus {
 
 /* DEGREE */
 #gitGithub {
+  transform: translateY(-10%);
+  opacity: 0;
+  display: none;
+  transition: all 0.5s ease-in-out;
+  transform: translateY(0%);
+}
+#daw {
   transform: translateY(-10%);
   opacity: 0;
   display: none;
@@ -172,6 +196,33 @@ a,a:hover,a:focus {
 #gitGithub:checked ~ .button{
   transform: rotate(135deg);
   box-shadow: 0 0 0 0 transparent;
+}
+#daw:checked ~ #daw{
+  opacity: 1;
+  display: block;
+  transform: translateY(10%);
+}
+#daw:checked ~ .button{
+  transform: rotate(135deg);
+  box-shadow: 0 0 0 0 transparent;
+}
+
+/* WORKS */
+#works{
+  height: auto;
+  overflow-y:hidden;
+}#works section{
+ margin-bottom: 40px;
+}
+#works h3{
+  margin: 20px 10em;
+  text-align: center;
+}
+#works img{
+  max-width: 95%;
+  margin: 0 auto;
+  -webkit-box-shadow: 2px 2px 2px 2px rgba(0,0,0,0.15);
+  box-shadow: 2px 2px 2px 2px rgba(0,0,0,0.15);
 }
 
 /* CONTACT */
