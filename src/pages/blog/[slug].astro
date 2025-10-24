@@ -1,0 +1,27 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getEntry, getCollection } from "astro:content";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("blog", ({ data }) => data.published !== false);
+  return posts.map(p => ({ params: { slug: p.slug } }));
+}
+
+const { slug } = Astro.params;
+const post = await getEntry("blog", slug!);
+
+const { Content } = await post.render();
+const { title, description, tags, date } = post.data;
+const dateStr = date ? new Date(date).toLocaleDateString("es-ES") : "";
+---
+<BaseLayout title={`${title} · Blog · Adrián Mariscal`} current="blog">
+  <article class="max-w-3xl py-8">
+    <h1 class="text-3xl font-bold">{title}</h1>
+    <p class="mt-1 text-sm text-gray-600">{dateStr}</p>
+    <p class="mt-3 text-gray-700">{description}</p>
+    {tags?.length && <p class="mt-2 text-sm">{tags.map(t => `#${t}`).join(" ")}</p>}
+    <div class="mt-8">
+      <Content />
+    </div>
+  </article>
+</BaseLayout>

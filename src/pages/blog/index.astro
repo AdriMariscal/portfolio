@@ -1,0 +1,16 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PostCard from "../../components/PostCard.astro";
+import { getCollection } from "astro:content";
+
+const all = await getCollection("blog", ({ data }) => data.published !== false);
+const posts = all.sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
+---
+<BaseLayout title="Blog · Adrián Mariscal" current="blog">
+  <section class="py-10">
+    <h1 class="text-3xl font-bold">Blog</h1>
+    <div class="mt-6 grid gap-6">
+      {posts.map(p => <PostCard entry={p} />)}
+    </div>
+  </section>
+</BaseLayout>
