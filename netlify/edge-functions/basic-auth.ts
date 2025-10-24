@@ -1,10 +1,9 @@
-@"
 export default async (request: Request, context: any) => {
   const env = Deno.env.get("ENVIRONMENT") || "development";
   if (env !== "staging") return context.next();
 
-  const user = Deno.env.get("STAGING_USER");
-  const pass = Deno.env.get("STAGING_PASS");
+  const user = Deno.env.get("STAGING_USER") ?? "";
+  const pass = Deno.env.get("STAGING_PASS") ?? "";
 
   const unauthorized = () =>
     new Response("Authentication required", {
@@ -13,11 +12,16 @@ export default async (request: Request, context: any) => {
     });
 
   const auth = request.headers.get("authorization");
-  if (!auth?.startsWith("Basic ")) return unauthorized();
+  if (!auth || !auth.startsWith("Basic ")) return unauthorized();
 
-  const [u, p] = atob(auth.split(" ")[1]).split(":");
+  let decoded = "";
+  try {
+    decoded = atob(auth.slice("Basic ".length));
+  } catch {
+    return unauthorized();
+  }
+  const [u, p] = decoded.split(":");
+
   if (u !== user || p !== pass) return unauthorized();
-
   return context.next();
 };
-"@ | Out-File -FilePath netlify/edge-functions/basic-auth.ts -Encoding utf8
