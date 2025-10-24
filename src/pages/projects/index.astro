@@ -3,18 +3,22 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import ProjectCard from "../../components/ProjectCard.astro";
 import { getCollection } from "astro:content";
 
-const all = await getCollection("projects", ({ data }) => data.published !== false);
+const all = await getCollection(
+  "projects",
+  ({ data }) => data.published !== false,
+);
 const projects = all.sort((a, b) => {
   const ad = a.data.date ? new Date(a.data.date).getTime() : 0;
   const bd = b.data.date ? new Date(b.data.date).getTime() : 0;
   return bd - ad;
 });
 ---
+
 <BaseLayout title="Proyectos · Adrián Mariscal" current="projects">
   <section class="py-10">
     <h1 class="text-3xl font-bold">Proyectos</h1>
-    <div class="mt-6 grid gap-6 sm:grid-cols-2">
-      {projects.map(p => <ProjectCard entry={p} />)}
+    <div class="card-grid">
+      {projects.map((p) => <ProjectCard entry={p} />)}
     </div>
   </section>
 </BaseLayout>
