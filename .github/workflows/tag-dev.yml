@@ -32,7 +32,10 @@ jobs:
 
       - name: Read base version from package.json
         id: base
-        run: echo "version=$(node -p \"require('./package.json').version\")" >> $GITHUB_OUTPUT
+        shell: bash
+        run: |
+          VERSION=$(node -e "console.log(require('./package.json').version)")
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Compute next dev tag
         id: compute
