@@ -1,0 +1,27 @@
+---
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+
+type Tab = 'projects' | 'blog' | undefined;
+
+const {
+  title = "Adrián Mariscal · Portfolio",
+  description = "Portfolio y blog de Adrián Mariscal (Astro).",
+  current
+} = Astro.props as { title?: string; description?: string; current?: Tab };
+---
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+  </head>
+  <body class="min-h-screen bg-white text-gray-900">
+    <Header current={current} />
+    <main class="mx-auto max-w-5xl px-4">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>
