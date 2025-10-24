@@ -20,6 +20,16 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Setup Node (for reading package.json)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Configure Git identity (for annotated tags)
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
       - name: Read base version from package.json
         id: base
         run: echo "version=$(node -p \"require('./package.json').version\")" >> $GITHUB_OUTPUT
