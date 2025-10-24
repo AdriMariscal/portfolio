@@ -1,0 +1,53 @@
+name: Tag dev pre-release
+
+on:
+  push:
+    branches: [dev]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: tag-dev-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  tag-dev:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout (full history + tags)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Read base version from package.json
+        id: base
+        run: echo "version=$(node -p \"require('./package.json').version\")" >> $GITHUB_OUTPUT
+
+      - name: Compute next dev tag
+        id: compute
+        run: |
+          VERSION="${{ steps.base.outputs.version }}"
+          git fetch --tags --force
+          COUNT=$(git tag -l "v${VERSION}-dev.*" | wc -l)
+          NEXT=$((COUNT+1))
+          TAG="v${VERSION}-dev.${NEXT}"
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+          echo "Will create $TAG"
+
+      - name: Create git tag
+        run: |
+          TAG="${{ steps.compute.outputs.tag }}"
+          if git rev-parse -q --verify "refs/tags/$TAG" >/dev/null; then
+            echo "Tag $TAG already exists; skipping."
+            exit 0
+          fi
+          git tag -a "$TAG" -m "$TAG"
+          git push origin "$TAG"
+
+      - name: Create GitHub prerelease
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="${{ steps.compute.outputs.tag }}"
+          gh release create "$TAG" --title "$TAG" --notes "Automated dev pre-release" --prerelease
