@@ -1,6 +1,9 @@
 export default async (request: Request, context: any) => {
-  const env = Deno.env.get("ENVIRONMENT") || "development";
-  if (env !== "staging") return context.next();
+  // Detecta si es un Branch Deploy protegido por prefijo
+  const host = new URL(request.url).hostname.toLowerCase();
+  const protectedPrefixes = ["staging"]; // añade "dev" si quieres proteger dev también
+  const isProtected = protectedPrefixes.some((p) => host.startsWith(`${p}--`));
+  if (!isProtected) return context.next();
 
   const user = Deno.env.get("STAGING_USER") ?? "";
   const pass = Deno.env.get("STAGING_PASS") ?? "";
@@ -12,16 +15,16 @@ export default async (request: Request, context: any) => {
     });
 
   const auth = request.headers.get("authorization");
-  if (!auth || !auth.startsWith("Basic ")) return unauthorized();
+  if (!auth?.startsWith("Basic ")) return unauthorized();
 
   let decoded = "";
   try {
-    decoded = atob(auth.slice("Basic ".length));
+    decoded = atob(auth.slice(6));
   } catch {
     return unauthorized();
   }
   const [u, p] = decoded.split(":");
-
   if (u !== user || p !== pass) return unauthorized();
+
   return context.next();
 };
