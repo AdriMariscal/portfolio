@@ -1,0 +1,13 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[[edge_functions]]
+  path = "/*"
+  function = "basic-auth"
+
+[context.production.environment]
+  ENVIRONMENT = "production"
+
+[context."branch:staging".environment]
+  ENVIRONMENT = "staging"
