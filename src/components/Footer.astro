@@ -1,0 +1,9 @@
+---
+import pkg from "../../package.json" assert { type: "json" };
+const version = pkg.version as string;
+const year = new Date().getFullYear();
+---
+
+<footer class="container py-10 text-center text-sm muted">
+  <p>© {year} Adrián Mariscal · v{version}</p>
+</footer>

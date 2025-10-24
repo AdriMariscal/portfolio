@@ -1,0 +1,30 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getCollection, getEntryBySlug } from "astro:content";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("blog");
+  return posts.map((p) => ({ params: { slug: p.slug } }));
+}
+
+const { slug } = Astro.params;
+if (!slug) throw new Error("Missing slug");
+
+const post = await getEntryBySlug("blog", slug);
+if (!post) throw new Error(`Post not found: ${slug}`);
+
+const { Content } = await post.render();
+const { title, description, tags, date } = post.data;
+---
+
+<BaseLayout title={`${title} · Blog · Adrián Mariscal`} current="blog">
+  <article class="prose max-w-none">
+    <h1>{title}</h1>
+    {description && <p class="text-gray-600">{description}</p>}
+    {date && <p class="mt-1 text-sm">{new Date(date).toLocaleDateString("es-ES")}</p>}
+    {tags?.length && <p class="mt-2">{tags.map((t) => `#${t}`).join(" ")}</p>}
+    <section class="prose mt-6">
+      <Content />
+    </section>
+  </article>
+</BaseLayout>

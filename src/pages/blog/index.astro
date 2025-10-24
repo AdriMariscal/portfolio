@@ -1,0 +1,28 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PostCard from "../../components/PostCard.astro";
+import { getCollection } from "astro:content";
+
+// Trae TODO y ordénalo por fecha desc, sin filtrar en exceso
+const all = await getCollection("blog");
+const posts = all
+  .filter((p) => p.data.published !== false)
+  .sort((a, b) => {
+    const ad = a.data.date ? new Date(a.data.date).getTime() : 0;
+    const bd = b.data.date ? new Date(b.data.date).getTime() : 0;
+    return bd - ad;
+  });
+---
+
+<BaseLayout title="Blog · Adrián Mariscal" current="blog">
+  <section class="py-10">
+    <h1 class="text-3xl font-bold mb-6">Blog</h1>
+
+    <!-- DEBUG opcional: quita esto cuando veas el número correcto -->
+    <!-- <p>Posts encontrados: {posts.length}</p> -->
+
+    <div class="card-grid">
+      {posts.map((p) => <PostCard entry={p} />)}
+    </div>
+  </section>
+</BaseLayout>
