@@ -1,0 +1,14 @@
+---
+import type { CollectionEntry } from "astro:content";
+export interface Props { entry: CollectionEntry<"blog"> }
+const { entry } = Astro.props;
+const { title, description, date } = entry.data;
+---
+
+<article class="card">
+  <h2 class="card-title">
+    <a href={`/blog/${entry.slug}/`}>{title}</a>
+  </h2>
+  {description && <p class="card-desc">{description}</p>}
+  {date && <p class="card-meta">{new Date(date).toLocaleDateString("es-ES")}</p>}
+</article>
