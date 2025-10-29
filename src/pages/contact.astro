@@ -1,0 +1,35 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+<BaseLayout title="Contacto · Adrián Mariscal" current="contact">
+  <section class="stack" style="margin-top:2rem">
+    <h1>Contacto</h1>
+    <p class="muted">Cuéntame en qué te puedo ayudar.</p>
+
+    <form name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field" action="/thanks" class="card stack">
+      <!-- Requisito de Netlify Forms -->
+      <input type="hidden" name="form-name" value="contact" />
+      <!-- Honeypot (anti-spam) -->
+      <p style="display:none">
+        <label>Si ves este campo, déjalo vacío: <input name="bot-field" /></label>
+      </p>
+
+      <label>
+        Nombre
+        <input name="name" required style="width:100%;padding:.6rem;border:1px solid var(--line);border-radius:8px" />
+      </label>
+
+      <label>
+        Email
+        <input type="email" name="email" required style="width:100%;padding:.6rem;border:1px solid var(--line);border-radius:8px" />
+      </label>
+
+      <label>
+        Mensaje
+        <textarea name="message" rows="6" required style="width:100%;padding:.6rem;border:1px solid var(--line);border-radius:8px"></textarea>
+      </label>
+
+      <button type="submit" style="padding:.6rem 1rem;border-radius:8px;background:#0ea5e9;color:white">Enviar</button>
+    </form>
+  </section>
+</BaseLayout>
