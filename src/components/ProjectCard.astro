@@ -1,21 +1,43 @@
 ---
 import type { CollectionEntry } from "astro:content";
-interface Props { entry: CollectionEntry<'projects'> }
+
+interface Props {
+  entry: CollectionEntry<"projects">;
+}
 const { entry } = Astro.props;
 const { data, slug } = entry;
+const latest = data.changelog?.[0];
 ---
-<article class="rounded-2xl border p-5 hover:shadow transition">
-  <a href={`/projects/${slug}`} class="block">
+
+<article class="rounded-2xl border border-slate-200 dark:border-slate-800 p-5 hover:shadow transition">
+  <a href={`/projects/${slug}/`} class="block">
     <h3 class="text-xl font-semibold">{data.title}</h3>
-    <p class="mt-1 text-sm text-gray-600">{data.description}</p>
-    {data.tags.length > 0 && (
+    <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">{data.description}</p>
+
+    {data.tags?.length > 0 && (
       <ul class="mt-2 flex flex-wrap gap-2">
-        {data.tags.map(t => <li class="text-xs bg-gray-100 px-2 py-0.5 rounded">{t}</li>)}
+        {data.tags.map((t) => (
+          <li class="text-xs bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded">
+            {t}
+          </li>
+        ))}
       </ul>
     )}
   </a>
-  <div class="mt-3 flex gap-3 text-sm">
-    {data.repoUrl && <a class="underline" href={data.repoUrl} target="_blank">Código</a>}
-    {data.demoUrl && <a class="underline" href={data.demoUrl} target="_blank">Demo</a>}
-  </div>
+
+  {(data.repoUrl || data.demoUrl) && (
+    <div class="mt-3 flex gap-3 text-sm">
+      {data.repoUrl && (
+        <a class="underline" href={data.repoUrl} target="_blank" rel="noopener noreferrer">Código</a>
+      )}
+      {data.demoUrl && (
+        <a class="underline" href={data.demoUrl} target="_blank" rel="noopener noreferrer">Demo</a>
+      )}
+    </div>
+  )}
+
+  <p class="mt-2 text-sm text-gray-500">
+    {data.status}
+    {latest ? ` · ${latest.version} (${new Date(latest.date).toLocaleDateString("es-ES")})` : ""}
+  </p>
 </article>
