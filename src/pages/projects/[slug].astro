@@ -27,11 +27,11 @@ function fmt(d: Date | string) {
 
 <BaseLayout title={`${data.title} · Proyecto`} description={data.description}>
   <section class="section">
-    <div class="container">
+    <div class="wrap">   {/** antes usábamos "container"; debe ser "wrap" **/}
 
       <article class="card">
         <div class="card__body">
-          <h1 style="margin-bottom:.5rem">{data.title}</h1>
+          <h1 class="card__title" style="margin-bottom:.5rem">{data.title}</h1>
 
           <p style="margin:.25rem 0 1rem; color:var(--am-graphite,#162433); font-size:.95rem">
             <strong>Estado:</strong> {data.status}
@@ -51,16 +51,18 @@ function fmt(d: Date | string) {
             <p style="margin:.25rem 0 1rem"><strong>Tecnologías:</strong> {data.tags.join(", ")}</p>
           ) : null}
 
-          <hr style="border:none; border-top:1px solid #E2E8F0; margin:12px 0" />
+          <hr style="border:none; border-top:1px solid var(--am-border); margin:12px 0" />
 
-          {/* Cuerpo del proyecto en Markdown */}
-          <Content />
+          {/* Cuerpo del proyecto en Markdown con estilo "prose" */}
+          <div class="prose">
+            <Content />
+          </div>
         </div>
       </article>
 
       {data.changelog?.length ? (
-        <section class="section" style="padding-top:24px">
-          <h2>Changelog</h2>
+        <section class="section section--tight">
+          <h2 class="h2">Changelog</h2>
           <ul class="stack">
             {data.changelog.map((rel) => (
               <li class="card">
@@ -68,7 +70,7 @@ function fmt(d: Date | string) {
                   <div class="card__title">
                     {rel.version} <span style="font-size:.9rem; color:#6b7280">({fmt(rel.date)})</span>
                   </div>
-                  <ul style="margin-top:.5rem; padding-left:1.25rem">
+                  <ul class="prose-list">
                     {rel.changes.map((c) => (
                       <li><code>{c.type}</code> {c.text}</li>
                     ))}
