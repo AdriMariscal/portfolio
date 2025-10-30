@@ -1,89 +1,175 @@
-/* === Reset suave + tokens de marca === */
+/* ---------- Reset + base ---------- */
 *,*::before,*::after{box-sizing:border-box}
-html,body{padding:0;margin:0}
-img{max-width:100%;display:block}
+*{margin:0}
+html:focus-within{scroll-behavior:smooth}
+html,body{height:100%}
+body{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+img,picture,video,canvas,svg{display:block;max-width:100%}
+input,button,textarea,select{font:inherit}
 a{color:inherit;text-decoration:none}
-:root{
-  /* Paleta (Guía de Marca) */
-  --am-ink:#0B1F3B;       /* primario */
-  --am-accent:#21B6A8;    /* secundario */
-  --am-graphite:#162433;  /* neutro oscuro */
-  --am-cloud:#E6EEF4;     /* neutro claro */
-  --am-bg:#F8FAFC;        /* fondo */
-  --am-text:#0A1020;      /* texto */
-  --am-success:#0FA47A; --am-warn:#F59E0B; --am-error:#E11D48;
 
-  /* Forma y layout */
+/* ---------- Tokens (colores, tipografía, radios, sombras) ---------- */
+/* Paleta y tokens según Guía de Marca v0.1 */
+:root{
+  /* Colores marca */
+  --am-ink:#0B1F3B;        /* primario */
+  --am-accent:#21B6A8;     /* secundario */
+  --am-graphite:#162433;   /* neutro oscuro */
+  --am-cloud:#E6EEF4;      /* neutro claro */
+  --am-bg:#F8FAFC;         /* fondo */
+  --am-text:#0A1020;       /* texto */
+  --am-success:#0FA47A;
+  --am-warn:#F59E0B;
+  --am-error:#E11D48;
+
+  /* Bordes/sombras/forma */
+  --am-border:#E2E8F0;
   --am-radius:12px;
   --am-radius-pill:9999px;
   --am-shadow:0 10px 30px rgba(11,31,59,0.08);
+
+  /* Layout */
   --am-maxw:1200px;
   --am-gutter:24px;
+  --section-pad:56px;
+
+  /* Tipografías (las fuentes se cargan por <link> en <head>) */
+  --font-ui: Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
+  --font-display: Sora, Inter, system-ui, sans-serif;
+
+    /* Acento suave para chips */
+  --am-accent-soft: #E6FAF6;   /* fondo mint muy suave */
+  --am-accent-border: #BFEAE1; /* borde suave para chips */
 }
 
-/* === Tipografía === */
-html{font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji"; color:var(--am-text); background:var(--am-bg); line-height:1.6}
-h1,h2,h3{font-family: "Sora", Inter, system-ui, sans-serif; color:var(--am-ink); line-height:1.2; margin:0 0 0.5em}
-h1{font-weight:700;font-size:clamp(2rem,3.5vw,3.25rem)}
-h2{font-weight:600;font-size:clamp(1.5rem,2.6vw,2.25rem)}
-h3{font-weight:600;font-size:1.375rem}
-p{margin:0 0 1rem}
-small{font-size:0.875rem;color:var(--am-graphite)}
-a.link{color:var(--am-accent); text-decoration:underline}
-
-/* === Accesibilidad mínima === */
-:focus-visible{outline:2px solid var(--am-accent); outline-offset:2px}
-
-/* === Layout helpers === */
-.container{max-width:var(--am-maxw); margin-inline:auto; padding-inline:clamp(16px,4vw,var(--am-gutter))}
-.section{padding-block:clamp(32px,6vw,64px)}
-.stack > * + *{margin-top:clamp(8px,1.5vw,16px)}
-.grid{display:grid; gap:clamp(12px,2vw,24px)}
-.grid--2{grid-template-columns:repeat(2,minmax(0,1fr))}
-@media (max-width:720px){.grid--2{grid-template-columns:1fr}}
-/* helper global para envoltorios simples */
-.wrap{max-width:var(--am-maxw); margin-inline:auto; padding-inline:clamp(16px,4vw,var(--am-gutter))}
-
-/* === Header / Nav === */
-.site-header{
-  position:sticky; top:0; z-index:50;
-  backdrop-filter: blur(12px);
-  background: rgba(248,250,252,0.7);
-  border-bottom:1px solid #E2E8F0;
+html,body{
+  background:var(--am-bg);
+  color:var(--am-text);
+  font-family:var(--font-ui);
+  line-height:1.55;
 }
-.nav{display:flex; align-items:center; justify-content:space-between; height:64px}
-.brand{display:flex; align-items:center; gap:12px; font-family:"Sora", Inter, system-ui, sans-serif; font-weight:700; color:var(--am-ink)}
-.nav ul{display:flex; gap:20px; list-style:none; padding:0; margin:0}
-.nav a{color:var(--am-ink)}
-.nav a:hover{color:var(--am-accent); text-decoration:underline}
+h1,h2,h3{line-height:1.2}
+h1,h2,h3,strong{color:var(--am-ink)}
 
-/* === Botones === */
-.btn{display:inline-flex; align-items:center; justify-content:center; gap:8px; border-radius:var(--am-radius); padding:.7rem 1rem; font-weight:600; transition:filter .15s ease}
-.btn--primary{background:var(--am-ink); color:white; box-shadow:var(--am-shadow)}
+/* ---------- Helpers ---------- */
+.wrap{max-width:var(--am-maxw);margin-inline:auto;padding-inline:16px}
+.section{padding-block:var(--section-pad)}
+.h2{font-size:1.75rem;font-weight:700;margin-bottom:16px}
+.muted{color:var(--am-graphite)}
+.stack{display:flex;flex-direction:column;gap:var(--stack-gap,16px)}
+.grid{display:grid;gap:16px}
+.grid--3{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media (max-width:900px){.grid--3{grid-template-columns:1fr}}
+.card{
+  background:#fff;
+  border:1px solid var(--am-border);
+  border-radius:var(--am-radius);
+  box-shadow:var(--am-shadow);
+}
+.card__body{padding:18px}
+.card__title{font-size:1.25rem;font-weight:700;color:var(--am-ink)}
+
+/* ---------- Header ---------- */
+.header{
+  position:sticky;top:0;z-index:10;
+  background:rgba(248,250,252,0.7);
+  backdrop-filter:saturate(140%) blur(12px);
+  -webkit-backdrop-filter:saturate(140%) blur(12px);
+  border-bottom:1px solid var(--am-border);
+}
+.header__inner{display:flex;align-items:center;justify-content:space-between;height:64px}
+.brand{font-family:var(--font-display);font-weight:800;letter-spacing:.2px;color:var(--am-ink)}
+.nav{display:flex;gap:18px}
+.nav__link{padding:8px 10px;border-radius:10px;color:var(--am-graphite)}
+.nav__link[aria-current="true"]{
+  background:rgba(11,31,59,.08);
+  color:var(--am-ink);
+}
+
+/* ---------- Hero ---------- */
+.hero{background:var(--am-cloud)}
+.hero__title{
+  font-family:var(--font-display);
+  font-size:clamp(2rem,2vw+2rem,3rem);
+  font-weight:800;
+  color:var(--am-ink);
+  margin-bottom:8px;
+}
+.hero__lead{color:var(--am-graphite)}
+.hero__stats .card__title{font-size:1.4rem}
+
+/* ---------- Botones ---------- */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  height:44px;padding:0 16px;border-radius:var(--am-radius);
+  font-weight:600;border:1px solid transparent;transition:.15s ease;
+}
+.btn--primary{
+  background:var(--am-ink);color:#fff;border-color:var(--am-ink);
+  box-shadow:var(--am-shadow);
+}
 .btn--primary:hover{filter:brightness(0.97)}
-.btn--secondary{border:1px solid var(--am-ink); color:var(--am-ink); background:transparent}
+.btn--secondary{
+  background:#fff;color:var(--am-ink);border-color:var(--am-ink)
+}
 .btn--secondary:hover{background:var(--am-cloud)}
 
-/* === Badges === */
-.badge{display:inline-block; padding:.35rem .6rem; border-radius:var(--am-radius-pill); font-size:.8125rem; border:1px solid color-mix(in srgb, var(--am-accent) 60%, transparent);}
-.badge--accent{background:color-mix(in srgb, var(--am-accent) 12%, white); color:var(--am-graphite); border-color:var(--am-accent)}
-
-/* === Inputs (formulario) === */
-.input{width:100%; padding:.6rem .75rem; border:1px solid #E2E8F0; border-radius:8px; background:#fff}
-
-/* === Cards === */
-.card{
-  background:white; border:1px solid #E2E8F0; border-radius:var(--am-radius);
-  box-shadow:0 0 0 rgba(0,0,0,0); transition: box-shadow .18s ease, transform .18s ease;
+/* ---------- Badge ---------- */
+.badge{
+  display:inline-flex;align-items:center;height:26px;padding:0 10px;
+  border-radius:var(--am-radius-pill);font-size:.82rem;
+  border:1px solid var(--am-border);color:var(--am-graphite);background:#fff
 }
-.card:hover{box-shadow:var(--am-shadow); transform:translateY(-2px)}
-.card__body{padding:clamp(14px,2.2vw,18px)}
-.card__title{font-family:"Sora", Inter, system-ui, sans-serif; font-weight:600; margin:0 0 .35rem; color:var(--am-ink)}
-.card__meta{display:flex; gap:8px; flex-wrap:wrap; margin-top:.5rem}
 
-/* === Utilidades de texto === */
-.muted{color:var(--am-graphite)}
+/* Variante específica para "active": estilo outline para diferenciar de chips */
+.badge--active{
+  border-color: var(--am-accent);
+  color: var(--am-accent);
+  background: transparent;
+}
 
-/* === Footer === */
-.site-footer{border-top:1px solid #E2E8F0; color:var(--am-graphite); padding-block:24px}
-.footer__inner{display:flex; align-items:center; justify-content:space-between; gap:12px}
+/* ---------- Chips / Tags ---------- */
+.tags{display:flex;gap:10px;flex-wrap:wrap}    /* antes gap: 8 */
+.tag{
+  display:inline-flex;align-items:center;height:28px;padding:0 12px;
+  border-radius:var(--am-radius-pill);
+  background:var(--am-accent-soft);
+  border:1px solid var(--am-accent-border);
+  color:var(--am-graphite);
+  font-weight:600;font-size:.85rem;line-height:1;
+  box-shadow:0 1px 0 rgba(11,31,59,.04);
+  transition:background .15s ease, transform .05s ease;
+}
+
+/* ---------- Footer ---------- */
+.footer{
+  border-top:1px solid var(--am-border);
+  padding-block:24px;
+  color:var(--am-graphite);
+}
+.footer__inner{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  text-align:center;
+}
+.footer__nav{
+  display:flex;
+  gap:14px;
+  flex-wrap:wrap;
+  justify-content:center;
+}
+.footer__link{
+  font-size:.9rem;
+  opacity:.85;
+}
+.footer__link:hover{
+  opacity:1;
+  color:var(--am-ink);
+  text-decoration:underline;
+}
+.footer__copy{
+  font-weight:600;
+}

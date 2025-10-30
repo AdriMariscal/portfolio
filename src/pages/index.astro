@@ -1,24 +1,47 @@
 ---
-import BaseLayout from "../layouts/BaseLayout.astro";
-import Hero from "../components/Hero.astro";
-import ProjectCard from "../components/ProjectCard.astro";
-import { getCollection } from "astro:content";
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/Hero.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import PostCard from '../components/PostCard.astro';
+import { getFeaturedProjects, countProjects, getRecentPosts } from '../lib/content';
 
-const allProjects = await getCollection('projects', ({ data }) => data.published !== false);
-const featured = allProjects.filter((p) => p.data.featured === true);
-const latest = featured.length ? featured : allProjects.slice(0, 2);
+const featured = await getFeaturedProjects();
+const projectsCount = await countProjects();
+const recentPosts = await getRecentPosts(3); // cambia 3 si quieres otro nº
 ---
-<BaseLayout title="Adrián Mariscal – Arquitecto Salesforce & dev web ligero">
-  <Hero />
 
+<BaseLayout title="Inicio · Adrián Mariscal">
+  <!-- Hero -->
+  <section class="hero section">
+    <div class="wrap">
+      <Hero projectsCount={projectsCount} />
+    </div>
+  </section>
+
+  <!-- Proyectos destacados -->
   <section class="section">
-    <div class="container">
-      <h2>Proyectos destacados</h2>
-      <div class="grid grid--2" style="margin-top:16px">
-        {latest.map((p) => (
-          <ProjectCard entry={p} />
-        ))}
+    <div class="wrap">
+      <h2 class="h2">Proyectos destacados</h2>
+      <div class="stack" style="--stack-gap: 16px">
+        {featured.map((entry) => <ProjectCard entry={entry} />)}
       </div>
     </div>
   </section>
+
+  <!-- Últimos artículos -->
+  <section class="section">
+    <div class="wrap">
+      <h2 class="h2">Últimos artículos</h2>
+      <div class="grid grid--3">
+        {recentPosts.map((p) => <PostCard entry={p} />)}
+      </div>
+      <div class="posts-cta">
+        <a class="btn btn--secondary" href="/blog">Ver todos los artículos</a>
+      </div>
+    </div>
+  </section>
+
+  <style>
+    .posts-cta{ margin-top: 18px; }
+  </style>
 </BaseLayout>

@@ -1,36 +1,36 @@
 // src/lib/content.ts
-import { getCollection, type CollectionEntry } from "astro:content";
+import { getCollection, type CollectionEntry } from 'astro:content';
 
-/** Tipos convenientes */
-export type ProjectEntry = CollectionEntry<"projects">;
-export type BlogEntry = CollectionEntry<"blog">;
-
-/** Posts publicados, ordenados por fecha (nueva → vieja) */
-export async function getAllPosts(): Promise<BlogEntry[]> {
-  const all = await getCollection("blog", ({ data }) => data.published !== false);
-  return [...all].sort(
-    (a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
+// ─────────────────────────────────────────────────────────────
+// PROYECTOS
+// ─────────────────────────────────────────────────────────────
+export async function getAllProjects(): Promise<CollectionEntry<'projects'>[]> {
+  const all = await getCollection('projects');
+  // orden opcional por "order" descendente si lo usas; si no existe, 0.
+  return all.sort(
+    (a, b) => (b.data.order ?? 0) - (a.data.order ?? 0),
   );
 }
 
-/** Proyectos publicados, ordenados por fecha (nueva → vieja) */
-export async function getAllProjects(): Promise<ProjectEntry[]> {
-  const all = await getCollection("projects", ({ data }) => data.published !== false);
-  return [...all].sort(
-    (a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
-  );
-}
-
-/** Los N posts más recientes (por defecto 3) */
-export async function getLatestPosts(limit = 3): Promise<BlogEntry[]> {
-  const all = await getAllPosts();
-  return all.slice(0, limit);
-}
-
-/** Proyectos destacados; si no hay, devuelve los N últimos */
-export async function getFeaturedProjects(limit = 4): Promise<ProjectEntry[]> {
+export async function getFeaturedProjects(): Promise<CollectionEntry<'projects'>[]> {
   const all = await getAllProjects();
-  const featured = all.filter((p) => p.data.featured === true);
-  const base = featured.length ? featured : all;
-  return base.slice(0, limit);
+  return all.filter((p) => p.data.featured === true);
+}
+
+export async function countProjects(): Promise<number> {
+  const all = await getCollection('projects');
+  return all.length;
+}
+
+// ─────────────────────────────────────────────────────────────
+// BLOG
+// ─────────────────────────────────────────────────────────────
+export async function getRecentPosts(limit = 3): Promise<CollectionEntry<'blog'>[]> {
+  const posts = await getCollection('blog');
+  posts.sort((a, b) => {
+    const da = new Date(a.data.date ?? 0).getTime();
+    const db = new Date(b.data.date ?? 0).getTime();
+    return db - da; // más nuevos primero
+  });
+  return posts.slice(0, limit);
 }

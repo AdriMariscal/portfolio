@@ -1,11 +1,7 @@
 ---
-import type { CollectionEntry } from 'astro:content';
+import type { CollectionEntry } from "astro:content";
 
-type WithEntry = {
-  entry: CollectionEntry<'projects'>;
-  href?: string; // permite forzar href si quieres
-};
-
+type WithEntry = { entry: CollectionEntry<"projects">; href?: string };
 type WithProps = {
   entry?: undefined;
   title: string;
@@ -13,69 +9,103 @@ type WithProps = {
   tags?: string[];
   repoUrl?: string;
   demoUrl?: string;
-  href: string; // obligatorio cuando no hay entry
+  href: string;
 };
 
 const props = Astro.props as WithEntry | WithProps;
 
-// Normaliza datos: usa entry si llega; si no, usa props sueltas
-let title: string;
-let description = '';
-let tags: string[] = [];
-let repo = '';
-let demo = '';
-let status = '';
-let slugHref = '#';
+function slugifyTag(t: string) {
+  return encodeURIComponent(
+    t.trim().normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase().replace(/\s+/g, "-")
+  );
+}
 
-if ('entry' in props && props.entry) {
+let title: string;
+let description = "";
+let tags: string[] = [];
+let repo = "";
+let demo = "";
+let status = "";
+let slugHref = "#";
+
+if ("entry" in props && props.entry) {
   const { data, slug } = props.entry;
-  title = data.title ?? 'Proyecto sin título';
-  description = data.description ?? '';
+  title = data.title ?? "Proyecto sin título";
+  description = data.description ?? "";
   tags = Array.isArray(data.tags) ? data.tags : [];
-  repo = (data as any).repoUrl ?? '';
-  demo = (data as any).demoUrl ?? '';
-  status = (data as any).status ?? '';
+  repo = (data as any).repoUrl ?? "";
+  demo = (data as any).demoUrl ?? "";
+  status = (data as any).status ?? "";
   slugHref = props.href ?? `/projects/${slug}`;
 } else {
-  // props sueltas
   title = props.title;
-  description = props.description ?? '';
+  description = props.description ?? "";
   tags = props.tags ?? [];
-  repo = props.repoUrl ?? '';
-  demo = props.demoUrl ?? '';
-  status = '';
+  repo = props.repoUrl ?? "";
+  demo = props.demoUrl ?? "";
+  status = "";
   slugHref = props.href;
 }
 ---
 
-<article class="project-card">
-  <header>
-    <h3><a href={slugHref}>{title}</a></h3>
-    {status && <span class="badge">{status}</span>}
-  </header>
+<article class="project-card card">
+  <div class="card__body">
+    <header class="project-card__head">
+      <h3 class="card__title"><a href={slugHref}>{title}</a></h3>
+      {status && <span class="badge badge--active">{status}</span>}
+    </header>
 
-  {description && <p class="desc">{description}</p>}
+    {description && <p class="muted">{description}</p>}
 
-  {(repo || demo || tags.length) && (
-    <footer class="meta">
-      <ul class="links">
-        {repo && <li><a href={repo} target="_blank" rel="noopener">Código</a></li>}
-        {demo && <li><a href={demo} target="_blank" rel="noopener">Demo</a></li>}
-      </ul>
-      {tags.length ? <ul class="tags">{tags.map((t) => <li>#{t}</li>)}</ul> : null}
-    </footer>
-  )}
+    {(repo || demo || tags.length) && (
+      <footer class="card__meta">
+        <ul class="links" aria-label="Enlaces">
+          {repo && (
+            <li>
+              <a class="link" href={repo} target="_blank" rel="noopener">Código</a>
+            </li>
+          )}
+          {demo && (
+            <li>
+              <a class="link" href={demo} target="_blank" rel="noopener">Demo</a>
+            </li>
+          )}
+        </ul>
+
+        {tags.length ? (
+          <ul class="tags" aria-label="Etiquetas">
+            {tags.map((t) => (
+              <li>
+                <a class="tag" href={`/blog/tags/${slugifyTag(t)}`}>#{t}</a>
+              </li>
+            ))}
+          </ul>
+        ) : null}
+      </footer>
+    )}
+  </div>
 </article>
 
 <style>
-.project-card{border:1px solid #e5e7eb; border-radius:12px; padding:16px; background:#fff;}
-.project-card header{display:flex; gap:8px; align-items:center; justify-content:space-between;}
-.project-card h3{margin:0; font-family:var(--font-display,'Sora'); font-weight:600; color:var(--am-ink,#0B1F3B);}
-.badge{border-radius:9999px; padding:2px 8px; font-size:12px; border:1px solid var(--am-accent,#21B6A8); color:var(--am-graphite,#162433);}
-.desc{margin:8px 0 12px; color:#333;}
-.meta{display:flex; justify-content:space-between; align-items:center; gap:8px;}
-.links,.tags{display:flex; gap:10px; list-style:none; margin:0; padding:0;}
-.links a{text-decoration:none;}
-.links a:hover{text-decoration:underline;}
-.tags li{font-size:12px; color:var(--am-graphite,#162433);}
+/* Más aire dentro de la tarjeta, solo para ProjectCard */
+.project-card .card__body{padding:22px}
+
+/* Cabecera con separación cómoda */
+.project-card__head{
+  display:flex;gap:12px;align-items:center;justify-content:space-between;
+  margin-bottom:10px
+}
+
+/* Bloque meta: enlaces a la izquierda, chips a la derecha; envuelven en móvil */
+.card__meta{
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:12px;margin-top:14px
+}
+
+/* Listados horizontales con buen gap */
+.links,.tags{display:flex;gap:12px;list-style:none;margin:0;padding:0;flex-wrap:wrap}
+
+/* Enlaces “Código/Demo” con subrayado discreto */
+.link{text-decoration:underline}
+.link:hover{text-decoration:none}
 </style>
