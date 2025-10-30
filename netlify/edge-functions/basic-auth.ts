@@ -41,4 +41,9 @@ export default async (request: Request, context: any) => {
   if (user !== expectedUser || pass !== expectedPass) return unauthorized();
 
   return context.next();
+
+  const url = new URL(request.url);
+  if (request.method === 'POST' && (url.pathname === '/contact' || url.pathname === '/thanks')) {
+    return context.next(); // deja pasar el envío a Netlify Forms
+  }
 };
