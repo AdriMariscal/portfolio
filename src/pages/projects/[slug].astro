@@ -3,7 +3,6 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import { getCollection, getEntryBySlug } from "astro:content";
 
 export async function getStaticPaths() {
-  // Solo generamos páginas para proyectos publicados
   const projects = await getCollection("projects", ({ data }) => data.published !== false);
   return projects.map((p) => ({ params: { slug: p.slug } }));
 }
@@ -17,7 +16,6 @@ if (!entry) throw new Error(`Proyecto no encontrado: ${slug}`);
 const { Content } = await entry.render();
 const data = entry.data;
 
-// Última versión (arriba en el array)
 const latest = data.changelog?.[0];
 const latestVersion = latest?.version ?? null;
 const lastUpdate = latest?.date ?? data.date;
@@ -28,51 +26,60 @@ function fmt(d: Date | string) {
 ---
 
 <BaseLayout title={`${data.title} · Proyecto`} description={data.description}>
-  <article class="prose prose-slate dark:prose-invert max-w-none">
-    <h1 class="!mb-2">{data.title}</h1>
+  <section class="section">
+    <div class="container">
 
-    <p class="text-sm text-gray-500 !mt-0">
-      <strong>Estado:</strong> {data.status}
-    {latestVersion && (
-        <> · <strong>Última versión:</strong> {latestVersion} <small>({fmt(lastUpdate)})</small></>
-    )}
-  </p>
+      <article class="card">
+        <div class="card__body">
+          <h1 style="margin-bottom:.5rem">{data.title}</h1>
 
-    {(data.repoUrl || data.demoUrl) && (
-      <p class="!mt-2">
-        {data.repoUrl && <a href={data.repoUrl} target="_blank" rel="noopener noreferrer">Código</a>}
-        {data.repoUrl && data.demoUrl && " · "}
-        {data.demoUrl && <a href={data.demoUrl} target="_blank" rel="noopener noreferrer">Demo</a>}
-    </p>
-  )}
+          <p style="margin:.25rem 0 1rem; color:var(--am-graphite,#162433); font-size:.95rem">
+            <strong>Estado:</strong> {data.status}
+            {latestVersion ? ` · ` : ""}
+            {latestVersion ? <><strong>Última versión:</strong> {latestVersion} <small>({fmt(lastUpdate)})</small></> : null}
+          </p>
 
-    {data.tags?.length ? (
-      <p class="!mt-2"><strong>Tecnologías:</strong> {data.tags.join(", ")}</p>
-  ) : null}
+          {(data.repoUrl || data.demoUrl) && (
+            <p style="margin:.25rem 0 1rem">
+              {data.repoUrl && <a class="link" href={data.repoUrl} target="_blank" rel="noopener noreferrer">Código</a>}
+              {data.repoUrl && data.demoUrl && " · "}
+              {data.demoUrl && <a class="link" href={data.demoUrl} target="_blank" rel="noopener noreferrer">Demo</a>}
+            </p>
+          )}
 
-  <hr />
+          {data.tags?.length ? (
+            <p style="margin:.25rem 0 1rem"><strong>Tecnologías:</strong> {data.tags.join(", ")}</p>
+          ) : null}
 
-  {/* Cuerpo del proyecto en Markdown */}
-  <Content />
-  </article>
+          <hr style="border:none; border-top:1px solid #E2E8F0; margin:12px 0" />
 
-  {data.changelog?.length ? (
-    <section class="mt-10">
-      <h2>Changelog</h2>
-      <ul class="not-prose space-y-4">
-        {data.changelog.map((rel) => (
-          <li class="rounded-2xl border border-slate-200 dark:border-slate-800 p-4">
-            <div class="font-semibold">
-              {rel.version} <span class="text-sm text-gray-500">({fmt(rel.date)})</span>
-            </div>
-            <ul class="mt-2 list-disc pl-5">
-              {rel.changes.map((c) => (
-                <li><code>{c.type}</code> {c.text}</li>
-              ))}
-            </ul>
-          </li>
-        ))}
-      </ul>
-    </section>
-  ) : null}
+          {/* Cuerpo del proyecto en Markdown */}
+          <Content />
+        </div>
+      </article>
+
+      {data.changelog?.length ? (
+        <section class="section" style="padding-top:24px">
+          <h2>Changelog</h2>
+          <ul class="stack">
+            {data.changelog.map((rel) => (
+              <li class="card">
+                <div class="card__body">
+                  <div class="card__title">
+                    {rel.version} <span style="font-size:.9rem; color:#6b7280">({fmt(rel.date)})</span>
+                  </div>
+                  <ul style="margin-top:.5rem; padding-left:1.25rem">
+                    {rel.changes.map((c) => (
+                      <li><code>{c.type}</code> {c.text}</li>
+                    ))}
+                  </ul>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
+    </div>
+  </section>
 </BaseLayout>

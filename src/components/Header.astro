@@ -1,9 +1,55 @@
-<nav class="container flex items-center justify-between py-4">
-  <a href="/" class="font-semibold">Adrián Mariscal</a>
-  <ul class="flex gap-6 text-sm">
-    <li><a href="/projects">Proyectos</a></li>
-    <li><a href="/blog">Blog</a></li>
-    <li><a href="/contact">Contacto</a></li>
-  </ul>
-</nav>
-<hr class="border-zinc-200 dark:border-zinc-800" />
+---
+const nav = [
+  { href: '/', label: 'Inicio' },
+  { href: '/projects', label: 'Proyectos' },
+  { href: '/blog', label: 'Blog' },
+  { href: '/contact', label: 'Contacto' },
+];
+
+const current = Astro.url.pathname;
+const isActive = (href: string) =>
+  current === href || (href !== '/' && current.startsWith(href));
+---
+
+<header class="site-header" role="banner">
+  <div class="wrap">
+    <a class="brand" href="/">Adrián Mariscal</a>
+    <nav aria-label="Navegación principal">
+      <ul>
+        {nav.map((n) => (
+          <li>
+            <a
+              href={n.href}
+              aria-current={isActive(n.href) ? 'page' : undefined}
+              class={isActive(n.href) ? 'active' : undefined}
+            >
+              {n.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<style>
+.site-header{
+  position:sticky; top:0;
+  background:var(--am-bg,#fff);
+  border-bottom:1px solid #e5e7eb;
+  backdrop-filter:saturate(180%) blur(8px);
+}
+.site-header .wrap{
+  max-width:1100px; margin:0 auto;
+  padding:12px 16px;
+  display:flex; align-items:center; justify-content:space-between;
+}
+.brand{
+  font-family:var(--font-display,'Sora',system-ui);
+  font-weight:700; text-decoration:none; color:var(--am-ink,#0B1F3B);
+}
+nav ul{display:flex; gap:16px; list-style:none; margin:0; padding:0;}
+nav a{text-decoration:none; color:inherit;}
+nav a:hover{text-decoration:underline;}
+nav a.active{color:var(--am-accent,#21B6A8); text-decoration:underline;}
+</style>

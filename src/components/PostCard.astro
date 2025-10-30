@@ -1,14 +1,35 @@
 ---
-import type { CollectionEntry } from "astro:content";
-export interface Props { entry: CollectionEntry<"blog"> }
+import type { CollectionEntry } from 'astro:content';
+
+export interface Props {
+  entry: CollectionEntry<'blog'>;
+}
 const { entry } = Astro.props;
-const { title, description, date } = entry.data;
+const { data, slug } = entry;
+
+const date = data.date ? new Date(data.date) : undefined;
+const when = date ? date.toLocaleDateString('es-ES') : '';
+const iso = date ? date.toISOString().split('T')[0] : '';
 ---
 
-<article class="card">
-  <h2 class="card-title">
-    <a href={`/blog/${entry.slug}/`}>{title}</a>
-  </h2>
-  {description && <p class="card-desc">{description}</p>}
-  {date && <p class="card-meta">{new Date(date).toLocaleDateString("es-ES")}</p>}
+<article class="post-card">
+  <h3><a href={`/blog/${slug}`}>{data.title}</a></h3>
+
+  <p class="meta">
+    {/* cambio: <time datetime="YYYY-MM-DD"> */}
+    {date ? <time datetime={iso}>{when}</time> : null}
+    {data.tags && data.tags.length ? ' · ' : ''}
+    {data.tags?.join(' · ')}
+  </p>
+
+  {data.description && <p class="desc">{data.description}</p>}
 </article>
+
+<style>
+.post-card{border:1px solid #e5e7eb; border-radius:12px; padding:16px; background:#fff;}
+.post-card h3{margin:0 0 6px; font-family:var(--font-display,'Sora'); font-weight:600; color:var(--am-ink,#0B1F3B);}
+.post-card .meta{margin:0 0 8px; font-size:12px; color:var(--am-graphite,#162433);}
+.post-card .desc{margin:0; color:#333;}
+.post-card a{text-decoration:none; color:inherit;}
+.post-card a:hover{text-decoration:underline;}
+</style>

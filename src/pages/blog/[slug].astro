@@ -3,7 +3,7 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import { getCollection, getEntryBySlug } from "astro:content";
 
 export async function getStaticPaths() {
-  const posts = await getCollection("blog");
+  const posts = await getCollection("blog", ({ data }) => data.published !== false);
   return posts.map((p) => ({ params: { slug: p.slug } }));
 }
 
@@ -14,17 +14,35 @@ const post = await getEntryBySlug("blog", slug);
 if (!post) throw new Error(`Post not found: ${slug}`);
 
 const { Content } = await post.render();
-const { title, description, tags, date } = post.data;
+const { title, description, tags = [], date } = post.data;
+
+const d = date ? new Date(date) : null;
+const when = d ? d.toLocaleDateString("es-ES") : "";
+const iso = d ? d.toISOString().split("T")[0] : "";
 ---
 
-<BaseLayout title={`${title} · Blog · Adrián Mariscal`} current="blog">
-  <article class="prose max-w-none">
-    <h1>{title}</h1>
-    {description && <p class="text-gray-600">{description}</p>}
-    {date && <p class="mt-1 text-sm">{new Date(date).toLocaleDateString("es-ES")}</p>}
-    {tags?.length && <p class="mt-2">{tags.map((t) => `#${t}`).join(" ")}</p>}
-    <section class="prose mt-6">
-      <Content />
-    </section>
-  </article>
+<BaseLayout title={`${title} · Blog · Adrián Mariscal`} description={description}>
+  <section class="section">
+    <div class="container">
+      <article class="card">
+        <div class="card__body">
+          <h1 style="margin-bottom:.25rem">{title}</h1>
+
+          {(description || d || tags.length) && (
+            <p style="margin:.25rem 0 1rem; color:var(--am-graphite,#162433); font-size:.95rem">
+              {description || null}
+              {d ? (description ? " · " : "") : ""}
+              {d ? <time datetime={iso}>{when}</time> : null}
+              {tags.length ? (description || d ? " · " : "") : ""}
+              {tags.length ? tags.map((t) => `#${t}`).join(" ") : ""}
+            </p>
+          )}
+
+          <div style="margin-top:12px">
+            <Content />
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
 </BaseLayout>

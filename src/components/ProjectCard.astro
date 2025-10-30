@@ -1,43 +1,81 @@
 ---
-import type { CollectionEntry } from "astro:content";
+import type { CollectionEntry } from 'astro:content';
 
-interface Props {
-  entry: CollectionEntry<"projects">;
+type WithEntry = {
+  entry: CollectionEntry<'projects'>;
+  href?: string; // permite forzar href si quieres
+};
+
+type WithProps = {
+  entry?: undefined;
+  title: string;
+  description?: string;
+  tags?: string[];
+  repoUrl?: string;
+  demoUrl?: string;
+  href: string; // obligatorio cuando no hay entry
+};
+
+const props = Astro.props as WithEntry | WithProps;
+
+// Normaliza datos: usa entry si llega; si no, usa props sueltas
+let title: string;
+let description = '';
+let tags: string[] = [];
+let repo = '';
+let demo = '';
+let status = '';
+let slugHref = '#';
+
+if ('entry' in props && props.entry) {
+  const { data, slug } = props.entry;
+  title = data.title ?? 'Proyecto sin título';
+  description = data.description ?? '';
+  tags = Array.isArray(data.tags) ? data.tags : [];
+  repo = (data as any).repoUrl ?? '';
+  demo = (data as any).demoUrl ?? '';
+  status = (data as any).status ?? '';
+  slugHref = props.href ?? `/projects/${slug}`;
+} else {
+  // props sueltas
+  title = props.title;
+  description = props.description ?? '';
+  tags = props.tags ?? [];
+  repo = props.repoUrl ?? '';
+  demo = props.demoUrl ?? '';
+  status = '';
+  slugHref = props.href;
 }
-const { entry } = Astro.props;
-const { data, slug } = entry;
-const latest = data.changelog?.[0];
 ---
 
-<article class="rounded-2xl border border-slate-200 dark:border-slate-800 p-5 hover:shadow transition">
-  <a href={`/projects/${slug}/`} class="block">
-    <h3 class="text-xl font-semibold">{data.title}</h3>
-    <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">{data.description}</p>
+<article class="project-card">
+  <header>
+    <h3><a href={slugHref}>{title}</a></h3>
+    {status && <span class="badge">{status}</span>}
+  </header>
 
-    {data.tags?.length > 0 && (
-      <ul class="mt-2 flex flex-wrap gap-2">
-        {data.tags.map((t) => (
-          <li class="text-xs bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded">
-            {t}
-          </li>
-        ))}
+  {description && <p class="desc">{description}</p>}
+
+  {(repo || demo || tags.length) && (
+    <footer class="meta">
+      <ul class="links">
+        {repo && <li><a href={repo} target="_blank" rel="noopener">Código</a></li>}
+        {demo && <li><a href={demo} target="_blank" rel="noopener">Demo</a></li>}
       </ul>
-    )}
-  </a>
-
-  {(data.repoUrl || data.demoUrl) && (
-    <div class="mt-3 flex gap-3 text-sm">
-      {data.repoUrl && (
-        <a class="underline" href={data.repoUrl} target="_blank" rel="noopener noreferrer">Código</a>
-      )}
-      {data.demoUrl && (
-        <a class="underline" href={data.demoUrl} target="_blank" rel="noopener noreferrer">Demo</a>
-      )}
-    </div>
+      {tags.length ? <ul class="tags">{tags.map((t) => <li>#{t}</li>)}</ul> : null}
+    </footer>
   )}
-
-  <p class="mt-2 text-sm text-gray-500">
-    {data.status}
-    {latest ? ` · ${latest.version} (${new Date(latest.date).toLocaleDateString("es-ES")})` : ""}
-  </p>
 </article>
+
+<style>
+.project-card{border:1px solid #e5e7eb; border-radius:12px; padding:16px; background:#fff;}
+.project-card header{display:flex; gap:8px; align-items:center; justify-content:space-between;}
+.project-card h3{margin:0; font-family:var(--font-display,'Sora'); font-weight:600; color:var(--am-ink,#0B1F3B);}
+.badge{border-radius:9999px; padding:2px 8px; font-size:12px; border:1px solid var(--am-accent,#21B6A8); color:var(--am-graphite,#162433);}
+.desc{margin:8px 0 12px; color:#333;}
+.meta{display:flex; justify-content:space-between; align-items:center; gap:8px;}
+.links,.tags{display:flex; gap:10px; list-style:none; margin:0; padding:0;}
+.links a{text-decoration:none;}
+.links a:hover{text-decoration:underline;}
+.tags li{font-size:12px; color:var(--am-graphite,#162433);}
+</style>

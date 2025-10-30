@@ -1,0 +1,52 @@
+---
+interface Metric { label: string; value: string }
+const metrics: Metric[] = [
+  { label: 'Años con Salesforce', value: '10+' },
+  { label: 'Proyectos propios', value: '12' },
+  { label: 'Lighthouse medio', value: '98/100' },
+];
+---
+
+<section class="hero">
+  <div class="wrap">
+    <h1>Arquitecto Salesforce & dev web ligero</h1>
+    <p class="lead">Lo que diseño y construyo se entiende, se usa y se mantiene.</p>
+    <div class="cta">
+      <a class="btn btn--primary" href="/contact">Hablemos de tu sistema</a>
+      <a class="btn btn--secondary" href="/projects">Ver casos y números</a>
+    </div>
+    <ul class="metrics">
+      {metrics.map((m) => (
+        <li>
+          <div class="value">{m.value}</div>
+          <div class="label">{m.label}</div>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+.hero{padding:48px 0; background:var(--am-bg,#F8FAFC);}
+.wrap{max-width:1100px; margin:0 auto; padding:0 16px;}
+h1{
+  font-family:var(--font-display,'Sora');
+  font-weight:700; color:var(--am-ink,#0B1F3B);
+  margin:0 0 12px; font-size:clamp(28px,4vw,44px);
+}
+.lead{color:var(--am-graphite,#162433); margin:0 0 16px;}
+.cta{display:flex; gap:12px; margin-bottom:20px;}
+/* .btn, .btn--primary, .btn--secondary ya están en global.css, aquí no redefinimos */
+.metrics{
+  display:grid; grid-template-columns:repeat(3,1fr);
+  gap:12px; list-style:none; padding:0; margin:0;
+}
+.metrics li{
+  border:1px solid #e5e7eb; border-radius:12px; padding:16px; background:#fff;
+}
+.value{font-weight:600; color:var(--am-ink,#0B1F3B); font-size:20px;}
+.label{font-size:12px; color:var(--am-graphite,#162433);}
+@media (max-width: 720px){
+  .metrics{grid-template-columns:1fr;}
+}
+</style>
