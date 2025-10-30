@@ -2,8 +2,6 @@
 title: "Portfolio personal (adrianmariscal.netlify.app)"
 description: "Sitio personal hecho con Astro. Blog, proyectos y contacto."
 tags: ["astro", "netlify", "forms", "typescript", "portfolio"]
-repoUrl: "https://github.com/AdriMariscal/portfolio"
-demoUrl: "https://adrianmariscal.netlify.app/"
 featured: true
 published: true
 date: 2025-10-24

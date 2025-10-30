@@ -1,0 +1,50 @@
+---
+// src/components/Hero.astro
+import { getCollection } from "astro:content";
+
+// Cuenta proyectos automáticamente
+const projects = await getCollection("projects");
+const projectsCount = projects.length;
+
+// 🔧 Cambia esta constante si tu ruta de etiquetas es distinta
+// p.ej. const SALESFORCE_TAG_PATH = "/blog?tag=salesforce";
+const SALESFORCE_TAG_PATH = "/blog/tags/salesforce";
+---
+
+<section class="section hero">
+  <div class="wrap">
+    <h1 class="hero__title">Arquitecto Salesforce &amp; soluciones web a medida</h1>
+    <p class="hero__lead">Diseño y construyo sistemas claros, mantenibles y con impacto.</p>
+
+    <div class="grid" style="grid-auto-flow: column; gap: 12px; width: max-content; margin-top: 16px">
+      <a class="btn btn--primary" href="/contact">Cuéntame tu proyecto</a>
+      <a class="btn btn--secondary" href="/blog">Leer el blog</a>
+    </div>
+
+    <div class="grid grid--3 hero__stats" style="margin-top: 20px">
+      <!-- 10+ años con Salesforce -> enlace a página de etiqueta -->
+      <a class="card card--link" href={SALESFORCE_TAG_PATH} aria-label="Entradas del blog con etiqueta Salesforce">
+        <div class="card__body">
+          <h3 class="card__title">10+</h3>
+          <small>Años con Salesforce</small>
+        </div>
+      </a>
+
+      <!-- Nº de proyectos -> calculado y con enlace a /projects -->
+      <a class="card card--link" href="/projects" aria-label="Ver proyectos">
+        <div class="card__body">
+          <h3 class="card__title">{projectsCount}</h3>
+          <small>Proyectos propios</small>
+        </div>
+      </a>
+
+      <!-- Lighthouse medio -> enlaza al post explicativo -->
+      <a class="card card--link" href="/blog/lighthouse" aria-label="Qué es Google Lighthouse">
+        <div class="card__body">
+          <h3 class="card__title">98/100</h3>
+        <small>Lighthouse medio</small>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>

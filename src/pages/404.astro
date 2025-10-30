@@ -1,10 +1,25 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 ---
-<BaseLayout title="Página no encontrada">
-  <section class="stack" style="margin-top:2rem">
-    <h1>404</h1>
-    <p class="muted">La página que buscas no existe.</p>
-    <p><a href="/">Volver al inicio</a></p>
+
+<BaseLayout title="404 · Página no encontrada">
+  <section class="section">
+    <div class="container">
+      <article class="card" style="text-align:center">
+        <div class="card__body">
+          <h1 style="font-size:clamp(2rem,6vw,4rem); margin:0">404</h1>
+          <p class="muted" style="margin:.5rem 0 1rem">
+            Ups… esta ruta no existe. (Prometo que en staging sí pasaba los tests 😅)
+          </p>
+
+          <div class="stack" style="margin-top:.5rem">
+            <a class="btn btn--primary" href="/">Volver al inicio</a>
+            <p><small>
+              ¿Buscabas <a class="link" href="/projects">Proyectos</a> o <a class="link" href="/blog">Blog</a>?
+            </small></p>
+          </div>
+        </div>
+      </article>
+    </div>
   </section>
 </BaseLayout>

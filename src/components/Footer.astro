@@ -1,9 +1,27 @@
 ---
-import pkg from "../../package.json" assert { type: "json" };
-const version = pkg.version as string;
-const year = new Date().getFullYear();
----
+import pkg from '../../package.json' assert { type: 'json' };
 
-<footer class="container py-10 text-center text-sm muted">
-  <p>© {year} Adrián Mariscal · v{version}</p>
+const year = new Date().getFullYear();
+const version = pkg.version;
+
+// Enlaces legales (ajusta rutas cuando tengas el contenido final)
+const legalLinks = [
+  { href: '/legal/aviso-legal', label: 'Aviso legal' },
+  { href: '/legal/privacidad', label: 'Privacidad' },
+  { href: '/legal/cookies', label: 'Cookies' },
+  { href: '/legal/terminos', label: 'Términos' },
+];
+---
+<footer class="footer">
+  <div class="wrap footer__inner">
+    <nav class="footer__nav" aria-label="Información legal">
+      {legalLinks.map((l) => (
+        <a class="footer__link" href={l.href}>{l.label}</a>
+      ))}
+    </nav>
+
+    <div class="footer__copy">
+      © {year} Adrián Mariscal · v{version}
+    </div>
+  </div>
 </footer>

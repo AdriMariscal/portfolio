@@ -1,63 +1,49 @@
 ---
-import BaseLayout from "../layouts/BaseLayout.astro";
-import ProjectCard from "../components/ProjectCard.astro";
-import PostCard from "../components/PostCard.astro";
-import { getFeaturedProjects, getLatestPosts } from "../lib/content";
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/Hero.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import PostCard from '../components/PostCard.astro';
+import { getFeaturedProjects, countProjects, getRecentPosts } from '../lib/content';
 
-const projects = await getFeaturedProjects(2);
-const posts = await getLatestPosts(2);
+const [featured, projectsCount, recentPosts] = await Promise.all([
+  getFeaturedProjects(),
+  countProjects(),
+  getRecentPosts(3), // cambia 3 si quieres otro nº de posts
+]);
 ---
-<BaseLayout title="Adrián Mariscal · Portfolio">
-  <!-- Hero -->
-  <section class="stack" style="margin-top:2rem">
-    <h1>Hola, soy Adrián 👋</h1>
-    <p class="muted">
-      Desarrollador web. Construyo productos con Astro y creo contenido para ayudar a otros.
-    </p>
-    <p>
-      <a href="/projects">Ver proyectos</a> · <a href="/blog">Leer el blog</a> ·
-      <a href="mailto:amariscalcantudo@gmail.com">Contacto</a>
-    </p>
-  </section>
 
-<BaseLayout title="Adrián Mariscal · Portfolio">
+<BaseLayout title="Inicio · Adrián Mariscal">
   <!-- Hero -->
-  <section class="stack" style="margin-top:2rem">
-    <h1>Hola, soy Adrián 👋</h1>
-    <p class="muted">
-      Desarrollador web. Construyo productos con Astro y creo contenido para ayudar a otros.
-    </p>
-    <p>
-      <a href="/projects">Ver proyectos</a> · <a href="/blog">Leer el blog</a> ·
-      <a href="mailto:amariscalcantudo@gmail.com">Contacto</a>
-    </p>
+  <section class="hero section">
+    <div class="wrap">
+      <Hero projectsCount={projectsCount} />
+    </div>
   </section>
 
   <!-- Proyectos destacados -->
-  <section class="stack" style="margin-top:2.5rem">
-    <h2>Proyectos destacados</h2>
-    {projects.length === 0 ? (
-      <p class="muted">Aún no hay proyectos destacados.</p>
-    ) : (
-      <div class="grid">
-        {projects.map(p => (
-          <ProjectCard entry={p} />
-        ))}
+  <section class="section">
+    <div class="wrap">
+      <h2 class="h2">Proyectos destacados</h2>
+      <div class="stack" style="--stack-gap: 16px">
+        {featured.map((entry) => <ProjectCard entry={entry} />)}
       </div>
-    )}
+    </div>
   </section>
 
-  <!-- Últimos posts -->
-  <section class="stack" style="margin-top:2.5rem">
-    <h2>Últimos posts</h2>
-    {posts.length === 0 ? (
-      <p class="muted">Aún no hay publicaciones.</p>
-    ) : (
-      <div class="grid">
-        {posts.map(p => (
-          <PostCard entry={p} />
-        ))}
+  <!-- Últimos artículos -->
+  <section class="section">
+    <div class="wrap">
+      <h2 class="h2">Últimos artículos</h2>
+      <div class="grid grid--3">
+        {recentPosts.map((entry) => <PostCard entry={entry} />)}
       </div>
-    )}
+      <div class="posts-cta">
+        <a class="btn btn--secondary" href="/blog">Ver todos los artículos</a>
+      </div>
+    </div>
   </section>
+
+  <style>
+    .posts-cta { margin-top: 18px; }
+  </style>
 </BaseLayout>
