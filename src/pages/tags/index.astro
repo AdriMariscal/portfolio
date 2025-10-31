@@ -1,0 +1,33 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+
+const slugify = (s: string) =>
+  s
+    .toLowerCase()
+    .normalize("NFD").replace(/\p{Diacritic}/gu, "")
+    .replace(/\s+/g, "-")
+    .replace(/[^a-z0-9-]/g, "");
+
+const posts = await getCollection("blog", ({ data }) => !data.draft);
+const counts = new Map<string, number>(); // label -> count
+for (const p of posts) for (const t of p.data.tags ?? []) counts.set(t, (counts.get(t) ?? 0) + 1);
+const tags = [...counts.entries()]
+  .sort((a, b) => a[0].localeCompare(b[0])); // alfabético
+---
+
+<BaseLayout title="Etiquetas">
+  <main class="section">
+    <div class="wrap">
+      <h1 class="h2" style="font-size:2rem;margin-bottom:18px">Etiquetas</h1>
+
+      <ul class="tags" style="margin-top:6px">
+        {tags.map(([label, n]) => (
+          <li>
+            <a class="tag" href={`/tags/${slugify(label)}/`}>#{label} ({n})</a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </main>
+</BaseLayout>
