@@ -1,35 +1,34 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 
-export interface Props {
+// Props: entry (post) y tope de etiquetas a mostrar (por defecto 4)
+const { entry, maxTags = 6 } = Astro.props as {
   entry: CollectionEntry<'blog'>;
-}
-const { entry } = Astro.props;
-const { data, slug } = entry;
+  maxTags?: number;
+};
 
-const date = data.date ? new Date(data.date) : undefined;
-const when = date ? date.toLocaleDateString('es-ES') : '';
-const iso = date ? date.toISOString().split('T')[0] : '';
+const { data, slug } = entry;
+const tags: string[] = Array.isArray(data.tags) ? data.tags : [];
 ---
 
-<article class="post-card">
-  <h3><a href={`/blog/${slug}`}>{data.title}</a></h3>
+<article class="card card--post">
+  <div class="card__body">
+    <h3 class="card__title postcard__title">
+      <a href={`/blog/${slug}/`}>{data.title}</a>
+  </h3>
 
-  <p class="meta">
-    {/* cambio: <time datetime="YYYY-MM-DD"> */}
-    {date ? <time datetime={iso}>{when}</time> : null}
-    {data.tags && data.tags.length ? ' · ' : ''}
-    {data.tags?.join(' · ')}
-  </p>
+    {data.description && (
+      <p class="postcard__excerpt">{data.description}</p>
+    )}
 
-  {data.description && <p class="desc">{data.description}</p>}
+  {tags.length > 0 && (
+      <ul class="tags">
+        {tags.slice(0, maxTags).map((t) => (
+          <li>
+            <a class="tag" href={`/tags/${encodeURIComponent(t).toLowerCase()}/`}>#{t}</a>
+          </li>
+      ))}
+    </ul>
+  )}
+    </div>
 </article>
-
-<style>
-.post-card{border:1px solid #e5e7eb; border-radius:12px; padding:16px; background:#fff;}
-.post-card h3{margin:0 0 6px; font-family:var(--font-display,'Sora'); font-weight:600; color:var(--am-ink,#0B1F3B);}
-.post-card .meta{margin:0 0 8px; font-size:12px; color:var(--am-graphite,#162433);}
-.post-card .desc{margin:0; color:#333;}
-.post-card a{text-decoration:none; color:inherit;}
-.post-card a:hover{text-decoration:underline;}
-</style>

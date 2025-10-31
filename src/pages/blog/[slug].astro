@@ -1,7 +1,9 @@
 ---
+// src/pages/blog/[slug].astro
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { getCollection, getEntryBySlug } from "astro:content";
 
+/** Genera las rutas estáticas SOLO para posts */
 export async function getStaticPaths() {
   const posts = await getCollection("blog", ({ data }) => data.published !== false);
   return posts.map((p) => ({ params: { slug: p.slug } }));
@@ -16,29 +18,49 @@ if (!post) throw new Error(`Post not found: ${slug}`);
 const { Content } = await post.render();
 const { title, description, tags = [], date } = post.data;
 
+/** Slug para enlaces de etiqueta (coincide con /tags/[tag].astro) */
+function tagSlug(s) {
+  return s
+    .toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // quita acentos
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+}
+
 const d = date ? new Date(date) : null;
 const when = d ? d.toLocaleDateString("es-ES") : "";
 const iso = d ? d.toISOString().split("T")[0] : "";
 ---
 
-<BaseLayout title={`${title} · Blog · Adrián Mariscal`} description={description}>
-  <section class="section">
-    <div class="container">
-      <article class="card">
-        <div class="card__body">
-          <h1 style="margin-bottom:.25rem">{title}</h1>
+<BaseLayout title={`${title} · Blog · Adrián Mariscal`} description={description} current="blog">
+  <section class="section post">
+    <div class="wrap">
+      <article class="card post__card">
+        <div class="card__body post__body">
+          <header class="post__header">
+            <h1 class="card__title post__title">{title}</h1>
 
-          {(description || d || tags.length) && (
-            <p style="margin:.25rem 0 1rem; color:var(--am-graphite,#162433); font-size:.95rem">
-              {description || null}
-              {d ? (description ? " · " : "") : ""}
-              {d ? <time datetime={iso}>{when}</time> : null}
-              {tags.length ? (description || d ? " · " : "") : ""}
-              {tags.length ? tags.map((t) => `#${t}`).join(" ") : ""}
-            </p>
+            {description && (
+              <p class="muted post__desc">{description}</p>
+            )}
+
+            {(d || tags.length) && (
+              <div class="post__meta">
+                {d && (
+                  <time datetime={iso} class="post__date">{when}</time>
           )}
+          {tags.length ? (
+                  <ul class="tags tags--sm post__tags">
+              {tags.map((t) => (
+                <li><a class="tag" href={`/tags/${tagSlug(t)}/`}>#{t}</a></li>
+              ))}
+            </ul>
+          ) : null}
+              </div>
+            )}
+          </header>
 
-          <div style="margin-top:12px">
+          <div class="prose post__prose">
             <Content />
           </div>
         </div>

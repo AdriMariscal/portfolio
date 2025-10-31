@@ -11,35 +11,31 @@ a{color:inherit;text-decoration:none}
 /* ---------- Tokens (colores, tipografía, radios, sombras) ---------- */
 /* Paleta y tokens según Guía de Marca v0.1 */
 :root{
-  /* Colores marca */
-  --am-ink:#0B1F3B;        /* primario */
-  --am-accent:#21B6A8;     /* secundario */
-  --am-graphite:#162433;   /* neutro oscuro */
-  --am-cloud:#E6EEF4;      /* neutro claro */
-  --am-bg:#F8FAFC;         /* fondo */
-  --am-text:#0A1020;       /* texto */
+  --am-ink:#0B1F3B;
+  --am-accent:#21B6A8;
+  --am-graphite:#162433;
+  --am-cloud:#E6EEF4;
+  --am-bg:#F8FAFC;
+  --am-text:#0A1020;
   --am-success:#0FA47A;
   --am-warn:#F59E0B;
   --am-error:#E11D48;
 
-  /* Bordes/sombras/forma */
   --am-border:#E2E8F0;
   --am-radius:12px;
   --am-radius-pill:9999px;
   --am-shadow:0 10px 30px rgba(11,31,59,0.08);
 
-  /* Layout */
   --am-maxw:1200px;
   --am-gutter:24px;
   --section-pad:56px;
 
-  /* Tipografías (las fuentes se cargan por <link> en <head>) */
   --font-ui: Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
   --font-display: Sora, Inter, system-ui, sans-serif;
 
     /* Acento suave para chips */
-  --am-accent-soft: #E6FAF6;   /* fondo mint muy suave */
-  --am-accent-border: #BFEAE1; /* borde suave para chips */
+  --am-accent-soft: #E6FAF6;
+  --am-accent-border: #BFEAE1;
 }
 
 html,body{
@@ -131,14 +127,25 @@ h1,h2,h3,strong{color:var(--am-ink)}
 }
 
 /* ---------- Chips / Tags ---------- */
-.tags{display:flex;gap:10px;flex-wrap:wrap}    /* antes gap: 8 */
+.tags{
+  display:flex;
+  gap:8px;               /* más compacto */
+  flex-wrap:wrap;
+  list-style:none;       /* ← sin viñetas */
+  padding:0;            /* ← reseteo */
+  margin:0;             /* ← reseteo */
+}
 .tag{
-  display:inline-flex;align-items:center;height:28px;padding:0 12px;
+  display:inline-flex;align-items:center;
+  height:24px;               /* ↓ más pequeña (antes 28px) */
+  padding:0 10px;            /* ajustado al nuevo alto */
   border-radius:var(--am-radius-pill);
   background:var(--am-accent-soft);
   border:1px solid var(--am-accent-border);
   color:var(--am-graphite);
-  font-weight:600;font-size:.85rem;line-height:1;
+  font-weight:600;
+  font-size:.8rem;           /* ↓ más pequeña (antes .85rem) */
+  line-height:1;
   box-shadow:0 1px 0 rgba(11,31,59,.04);
   transition:background .15s ease, transform .05s ease;
 }
@@ -163,17 +170,106 @@ h1,h2,h3,strong{color:var(--am-ink)}
   flex-wrap:wrap;
   justify-content:center;
 }
-.footer__link{
-  font-size:.9rem;
-  opacity:.85;
+.footer__link{font-size:.9rem;opacity:.85}
+.footer__link:hover{opacity:1;color:var(--am-ink);text-decoration:underline}
+.footer__copy{font-weight:600}
+
+/* --- Ajustes de layout y listas en fichas --- */
+.section--tight{ padding-top:24px; padding-bottom:0 }
+.stack{ list-style:none; padding:0; margin:0 }
+.prose h2{font-size:1.25rem;margin:12px 0 8px}
+.prose h3{font-size:1.05rem;margin:10px 0 6px}
+.prose p{margin:8px 0}
+.prose ul{padding-left:1.25rem; margin:6px 0}
+.prose li{margin:4px 0}
+.prose code{
+  background:#f3f5f9;border:1px solid var(--am-border);border-radius:6px;padding:0 .25rem;font-size:.9em;
 }
-.footer__link:hover{
-  opacity:1;
-  color:var(--am-ink);
-  text-decoration:underline;
+.prose-list{margin-top:.5rem;padding-left:1.25rem;list-style:disc}
+
+/* --- Ajustes de spacing específicos para tarjetas del blog --- */
+.card--post .card__body { padding: 22px; }              /* más aire dentro de la cajita */
+.card--post .postcard__title { margin: 0 0 10px; }       /* título → texto */
+.postcard__excerpt { margin: 0 0 12px; color: var(--am-graphite); } /* texto → etiquetas */
+.card--post .tags { margin-top: 10px; }                  /* separa las chips del texto */
+
+/* ============ POST (scoped) ============ */
+.post .wrap { max-width: 980px; }
+.post__card { margin: 8px auto 48px; }
+.post__body { padding: 28px 28px 32px; }
+
+.post__title {
+  font-size: clamp(28px, 3.2vw, 34px);
+  line-height: 1.2;
+  margin: 0 0 .4rem;
 }
-.footer__copy{
-  font-weight:600;
+
+.post__desc {
+  margin: .15rem 0 1rem;
+}
+
+/* Meta (fecha + tags) */
+.post__meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  margin: 4px 0 18px;
+}
+.post__date {
+  font-size: 14px;
+  color: var(--text-muted, #5b6572);
+}
+
+/* Tags pequeñas (no afecta a las globales) */
+.tags--sm .tag {
+  font-size: 12.5px;
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+
+/* Contenido del MD */
+.post__prose {
+  margin-top: 10px;
+  line-height: 1.7;
+}
+.post__prose p { margin: 0 0 1rem; }
+.post__prose h2 { font-size: 22px; margin: 1.6rem 0 .6rem; }
+.post__prose h3 { font-size: 18px; margin: 1.2rem 0 .5rem; }
+.post__prose ul,
+.post__prose ol { margin: .5rem 0 1.1rem 1.2rem; padding-left: 1rem; }
+.post__prose li { margin: .25rem 0; }
+.post__prose blockquote {
+  margin: 1.2rem 0;
+  padding: .8rem 1rem;
+  border-left: 4px solid rgba(0,0,0,.08);
+  background: rgba(0,0,0,.03);
+  border-radius: 8px;
+}
+.post__prose pre {
+  margin: 1.1rem 0;
+  padding: .85rem 1rem;
+  background: #0f172a10; /* leve */
+  border-radius: 10px;
+  overflow: auto;
+}
+.post__prose code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-size: .95em;
+}
+.post__prose img, 
+.post__prose video, 
+.post__prose iframe {
+  max-width: 100%;
+  height: auto;
+  border-radius: 10px;
+  margin: .6rem 0;
+}
+.post__prose hr {
+  border: 0;
+  height: 1px;
+  background: rgba(0,0,0,.08);
+  margin: 1.6rem 0;
 }
 
 /* --- Ajustes de layout y listas en fichas --- */
