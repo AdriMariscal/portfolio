@@ -23,6 +23,12 @@ const lastUpdate = latest?.date ?? data.date;
 function fmt(d: Date | string) {
   try { return new Date(d).toLocaleDateString("es-ES"); } catch { return String(d); }
 }
+
+// Asegura que cualquier URL sin protocolo sea absoluta (https://)
+function ensureAbs(url?: string) {
+  if (!url) return undefined;
+  return /^https?:\/\//i.test(url) ? url : `https://${url}`;
+}
 ---
 
 <BaseLayout title={`${data.title} · Proyecto`} description={data.description}>
@@ -39,11 +45,19 @@ function fmt(d: Date | string) {
             {latestVersion ? <><strong>Última versión:</strong> {latestVersion} <small>({fmt(lastUpdate)})</small></> : null}
           </p>
 
-          {(data.repoUrl || data.demoUrl) && (
+          {(data.projectUrl || data.repoUrl || data.demoUrl) && (
             <p style="margin:.25rem 0 1rem">
-              {data.repoUrl && <a class="link" href={data.repoUrl} target="_blank" rel="noopener noreferrer">Código</a>}
+              {data.projectUrl && (
+                <a class="link" href={ensureAbs(data.projectUrl)} target="_blank" rel="noopener noreferrer">Ver proyecto</a>
+              )}
+              {data.projectUrl && (data.repoUrl || data.demoUrl) && " · "}
+              {data.repoUrl && (
+                <a class="link" href={ensureAbs(data.repoUrl)} target="_blank" rel="noopener noreferrer">Código</a>
+              )}
               {data.repoUrl && data.demoUrl && " · "}
-              {data.demoUrl && <a class="link" href={data.demoUrl} target="_blank" rel="noopener noreferrer">Demo</a>}
+              {data.demoUrl && (
+                <a class="link" href={ensureAbs(data.demoUrl)} target="_blank" rel="noopener noreferrer">Demo</a>
+              )}
             </p>
           )}
 

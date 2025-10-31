@@ -9,6 +9,7 @@ type WithProps = {
   tags?: string[];
   repoUrl?: string;
   demoUrl?: string;
+  projectUrl?: string; // <— NUEVO
   href: string;
 };
 
@@ -16,8 +17,20 @@ const props = Astro.props as WithEntry | WithProps;
 
 function slugifyTag(t: string) {
   return encodeURIComponent(
-    t.trim().normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase().replace(/\s+/g, "-")
+    t
+      .trim()
+      .normalize("NFD")
+      .replace(/\p{Diacritic}/gu, "")
+      .toLowerCase()
+      .replace(/\s+/g, "-")
   );
+}
+
+// Prefija https:// si falta para que no sea ruta interna
+function toExternal(u: string) {
+  const s = (u ?? "").trim();
+  if (!s) return "";
+  return /^https?:\/\//i.test(s) ? s : `https://${s.replace(/^\/+/, "")}`;
 }
 
 let title: string;
@@ -25,6 +38,7 @@ let description = "";
 let tags: string[] = [];
 let repo = "";
 let demo = "";
+let project = ""; // <— NUEVO
 let status = "";
 let slugHref = "#";
 
@@ -35,6 +49,7 @@ if ("entry" in props && props.entry) {
   tags = Array.isArray(data.tags) ? data.tags : [];
   repo = (data as any).repoUrl ?? "";
   demo = (data as any).demoUrl ?? "";
+  project = (data as any).projectUrl ?? ""; // <— NUEVO
   status = (data as any).status ?? "";
   slugHref = props.href ?? `/projects/${slug}`;
 } else {
@@ -43,6 +58,7 @@ if ("entry" in props && props.entry) {
   tags = props.tags ?? [];
   repo = props.repoUrl ?? "";
   demo = props.demoUrl ?? "";
+  project = props.projectUrl ?? ""; // <— NUEVO
   status = "";
   slugHref = props.href;
 }
@@ -57,17 +73,22 @@ if ("entry" in props && props.entry) {
 
     {description && <p class="muted">{description}</p>}
 
-    {(repo || demo || tags.length) && (
+    {(project || repo || demo || tags.length) && (
       <footer class="card__meta">
         <ul class="links" aria-label="Enlaces">
           {repo && (
             <li>
-              <a class="link" href={repo} target="_blank" rel="noopener">Código</a>
+              <a class="link" href={toExternal(repo)} target="_blank" rel="noopener">Código</a>
             </li>
           )}
           {demo && (
             <li>
-              <a class="link" href={demo} target="_blank" rel="noopener">Demo</a>
+              <a class="link" href={toExternal(demo)} target="_blank" rel="noopener">Demo</a>
+            </li>
+          )}
+          {project && (
+            <li>
+              <a class="link" href={toExternal(project)} target="_blank" rel="noopener">Ver proyecto</a>
             </li>
           )}
         </ul>
@@ -105,7 +126,7 @@ if ("entry" in props && props.entry) {
 /* Listados horizontales con buen gap */
 .links,.tags{display:flex;gap:12px;list-style:none;margin:0;padding:0;flex-wrap:wrap}
 
-/* Enlaces “Código/Demo” con subrayado discreto */
+/* Enlaces “Código/Demo/Ver proyecto” con subrayado discreto */
 .link{text-decoration:underline}
 .link:hover{text-decoration:none}
 </style>
