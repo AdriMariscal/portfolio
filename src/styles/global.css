@@ -120,6 +120,8 @@ h1,h2,h3,strong{color:var(--am-ink)}
   border-radius:var(--am-radius-pill);font-size:.82rem;
   border:1px solid var(--am-border);color:var(--am-graphite);background:#fff
 }
+h1,h2,h3{line-height:1.2}
+h1,h2,h3,strong{color:var(--am-ink)}
 
 /* Variante específica para "active": estilo outline para diferenciar de chips */
 .badge--active{
