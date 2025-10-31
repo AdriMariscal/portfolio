@@ -120,6 +120,8 @@ h1,h2,h3,strong{color:var(--am-ink)}
   border-radius:var(--am-radius-pill);font-size:.82rem;
   border:1px solid var(--am-border);color:var(--am-graphite);background:#fff
 }
+h1,h2,h3{line-height:1.2}
+h1,h2,h3,strong{color:var(--am-ink)}
 
 /* Variante específica para "active": estilo outline para diferenciar de chips */
 .badge--active{
@@ -172,4 +174,35 @@ h1,h2,h3,strong{color:var(--am-ink)}
 }
 .footer__copy{
   font-weight:600;
+}
+
+/* --- Ajustes de layout y listas en fichas --- */
+.section--tight{ padding-top:24px; padding-bottom:0 }
+
+/* La lista “stack” del changelog no debe mostrar viñetas ni sangrías externas */
+.stack{
+  list-style:none;
+  padding:0;
+  margin:0;
+}
+
+/* Estilo ligero para el Markdown interno de la ficha */
+.prose h2{font-size:1.25rem;margin:12px 0 8px}
+.prose h3{font-size:1.05rem;margin:10px 0 6px}
+.prose p{margin:8px 0}
+.prose ul{padding-left:1.25rem; margin:6px 0}
+.prose li{margin:4px 0}
+.prose code{
+  background:#f3f5f9;
+  border:1px solid var(--am-border);
+  border-radius:6px;
+  padding:0 .25rem;
+  font-size:.9em;
+}
+
+/* Lista interna del changelog para que el “*” quede dentro de la tarjeta */
+.prose-list{
+  margin-top:.5rem;
+  padding-left:1.25rem;
+  list-style:disc;
 }
