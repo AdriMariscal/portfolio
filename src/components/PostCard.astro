@@ -25,7 +25,7 @@ const tags: string[] = Array.isArray(data.tags) ? data.tags : [];
       <ul class="tags">
         {tags.slice(0, maxTags).map((t) => (
           <li>
-            <a class="tag" href={`/tags/${encodeURIComponent(t).toLowerCase()}/`}>#{t}</a>
+            <a class="tag" href={`/blog/tags/${encodeURIComponent(t).toLowerCase()}/`}>#{t}</a>
           </li>
       ))}
     </ul>

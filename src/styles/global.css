@@ -302,3 +302,50 @@ h1,h2,h3,strong{color:var(--am-ink)}
   padding-left:1.25rem;
   list-style:disc;
 }
+/* ====== Contacto (mejorar respiración del formulario) ====== */
+.contact__intro{
+  margin: 6px 0 18px;
+}
+
+.contact__form{
+  max-width: 720px;
+  margin: 24px auto 0;
+}
+
+/* Más padding dentro de la tarjeta SOLO en contacto */
+.contact__form .card__body{
+  padding: 24px 24px 28px;
+}
+
+@media (min-width: 768px){
+  .contact__form .card__body{
+    padding: 28px 30px 32px;
+  }
+}
+
+/* Etiquetas de los campos */
+.field > span{
+  display:inline-block;
+  font-weight:600;
+  color:var(--am-ink);
+  margin: 6px 0 6px;
+}
+
+/* Inputs */
+.input{
+  width:100%;
+  background:#fff;
+  border:1px solid var(--am-border);
+  border-radius:10px;
+  padding:.75rem .9rem;
+}
+
+.input:focus{
+  outline:none;
+  border-color:var(--am-ink);
+  box-shadow:0 0 0 3px rgba(11,31,59,.10);
+}
+
+/* Botón ancho */
+.btn--block{ width:100%; }
+

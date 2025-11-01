@@ -52,7 +52,7 @@ const iso = d ? d.toISOString().split("T")[0] : "";
           {tags.length ? (
                   <ul class="tags tags--sm post__tags">
               {tags.map((t) => (
-                <li><a class="tag" href={`/tags/${tagSlug(t)}/`}>#{t}</a></li>
+                <li><a class="tag" href={`/blog/tags/${tagSlug(t)}/`}>#{t}</a></li>
               ))}
             </ul>
           ) : null}

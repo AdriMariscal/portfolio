@@ -3,48 +3,48 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 ---
 
 <BaseLayout title="Contacto · Adrián Mariscal" description="Cuéntame en qué te puedo ayudar.">
-  <section class="section">
-    <div class="container">
-      <h1>Contacto</h1>
+  <main class="section">
+    <div class="wrap">
+      <!-- Encabezado con respiración -->
+      <header class="contact__intro stack" style="--stack-gap: 6px;">
+        <h1 class="h2">Contacto</h1>
       <p class="muted">Cuéntame en qué te puedo ayudar.</p>
+      </header>
 
+      <!-- Formulario -->
       <form
+        class="card contact__form"
         name="contact"
         method="POST"
+        action="/thanks"
         data-netlify="true"
         netlify-honeypot="bot-field"
-        action="/thanks"
-        class="card stack"
       >
+        <!-- Netlify -->
         <input type="hidden" name="form-name" value="contact" />
-        <p style="display:none">
-          <label>Si ves este campo, déjalo vacío:
-            <input name="bot-field" />
-          </label>
+        <p hidden>
+          <label>Don’t fill this out: <input name="bot-field" /></label>
         </p>
 
-        <label>
-          Nombre
-          <input name="name" required class="input" />
+        <div class="card__body stack" style="--stack-gap: 18px;">
+          <label class="field">
+            <span>Nombre</span>
+            <input class="input" type="text" name="name" autocomplete="name" required />
         </label>
 
-        <label>
-          Email
-          <input type="email" name="email" required class="input" />
+          <label class="field">
+            <span>Email</span>
+            <input class="input" type="email" name="email" autocomplete="email" required />
         </label>
 
-        <label>
-          Mensaje
-          <textarea name="message" rows="6" required class="input"></textarea>
+          <label class="field">
+            <span>Mensaje</span>
+            <textarea class="input" name="message" rows="6" required></textarea>
         </label>
 
-        <button type="submit" class="btn btn--primary">Enviar</button>
+          <button class="btn btn--primary btn--block" type="submit">Enviar</button>
+        </div>
       </form>
     </div>
-  </section>
+  </main>
 </BaseLayout>
-
-<style>
-.input{width:100%;padding:.6rem;border:1px solid #E2E8F0;border-radius:8px}
-.muted{color:var(--am-graphite,#162433)}
-</style>
