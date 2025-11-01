@@ -129,22 +129,22 @@ h1,h2,h3,strong{color:var(--am-ink)}
 /* ---------- Chips / Tags ---------- */
 .tags{
   display:flex;
-  gap:8px;               /* más compacto */
+  gap:8px;
   flex-wrap:wrap;
-  list-style:none;       /* ← sin viñetas */
-  padding:0;            /* ← reseteo */
-  margin:0;             /* ← reseteo */
+  list-style:none;
+  padding:0;
+  margin:0;
 }
 .tag{
   display:inline-flex;align-items:center;
-  height:24px;               /* ↓ más pequeña (antes 28px) */
-  padding:0 10px;            /* ajustado al nuevo alto */
+  height:24px;
+  padding:0 10px;
   border-radius:var(--am-radius-pill);
   background:var(--am-accent-soft);
   border:1px solid var(--am-accent-border);
   color:var(--am-graphite);
   font-weight:600;
-  font-size:.8rem;           /* ↓ más pequeña (antes .85rem) */
+  font-size:.8rem;
   line-height:1;
   box-shadow:0 1px 0 rgba(11,31,59,.04);
   transition:background .15s ease, transform .05s ease;
@@ -188,10 +188,10 @@ h1,h2,h3,strong{color:var(--am-ink)}
 .prose-list{margin-top:.5rem;padding-left:1.25rem;list-style:disc}
 
 /* --- Ajustes de spacing específicos para tarjetas del blog --- */
-.card--post .card__body { padding: 22px; }              /* más aire dentro de la cajita */
-.card--post .postcard__title { margin: 0 0 10px; }       /* título → texto */
-.postcard__excerpt { margin: 0 0 12px; color: var(--am-graphite); } /* texto → etiquetas */
-.card--post .tags { margin-top: 10px; }                  /* separa las chips del texto */
+.card--post .card__body { padding: 22px; }
+.card--post .postcard__title { margin: 0 0 10px; }
+.postcard__excerpt { margin: 0 0 12px; color: var(--am-graphite); }
+.card--post .tags { margin-top: 10px; }
 
 /* ============ POST (scoped) ============ */
 .post .wrap { max-width: 980px; }
@@ -204,9 +204,7 @@ h1,h2,h3,strong{color:var(--am-ink)}
   margin: 0 0 .4rem;
 }
 
-.post__desc {
-  margin: .15rem 0 1rem;
-}
+.post__desc { margin: .15rem 0 1rem; }
 
 /* Meta (fecha + tags) */
 .post__meta {
@@ -216,12 +214,9 @@ h1,h2,h3,strong{color:var(--am-ink)}
   gap: 8px 12px;
   margin: 4px 0 18px;
 }
-.post__date {
-  font-size: 14px;
-  color: var(--text-muted, #5b6572);
-}
+.post__date { font-size: 14px; color: var(--text-muted, #5b6572); }
 
-/* Tags pequeñas (no afecta a las globales) */
+/* Tags pequeñas */
 .tags--sm .tag {
   font-size: 12.5px;
   padding: 4px 10px;
@@ -229,10 +224,7 @@ h1,h2,h3,strong{color:var(--am-ink)}
 }
 
 /* Contenido del MD */
-.post__prose {
-  margin-top: 10px;
-  line-height: 1.7;
-}
+.post__prose { margin-top: 10px; line-height: 1.7; }
 .post__prose p { margin: 0 0 1rem; }
 .post__prose h2 { font-size: 22px; margin: 1.6rem 0 .6rem; }
 .post__prose h3 { font-size: 18px; margin: 1.2rem 0 .5rem; }
@@ -249,7 +241,7 @@ h1,h2,h3,strong{color:var(--am-ink)}
 .post__prose pre {
   margin: 1.1rem 0;
   padding: .85rem 1rem;
-  background: #0f172a10; /* leve */
+  background: #0f172a10;
   border-radius: 10px;
   overflow: auto;
 }
@@ -302,50 +294,68 @@ h1,h2,h3,strong{color:var(--am-ink)}
   padding-left:1.25rem;
   list-style:disc;
 }
+
 /* ====== Contacto (mejorar respiración del formulario) ====== */
-.contact__intro{
-  margin: 6px 0 18px;
-}
-
-.contact__form{
-  max-width: 720px;
-  margin: 24px auto 0;
-}
-
-/* Más padding dentro de la tarjeta SOLO en contacto */
-.contact__form .card__body{
-  padding: 24px 24px 28px;
-}
-
-@media (min-width: 768px){
-  .contact__form .card__body{
-    padding: 28px 30px 32px;
-  }
-}
-
-/* Etiquetas de los campos */
-.field > span{
-  display:inline-block;
-  font-weight:600;
-  color:var(--am-ink);
-  margin: 6px 0 6px;
-}
-
-/* Inputs */
-.input{
-  width:100%;
-  background:#fff;
-  border:1px solid var(--am-border);
-  border-radius:10px;
-  padding:.75rem .9rem;
-}
-
-.input:focus{
-  outline:none;
-  border-color:var(--am-ink);
-  box-shadow:0 0 0 3px rgba(11,31,59,.10);
-}
-
-/* Botón ancho */
+.contact__intro{ margin: 6px 0 18px; }
+.contact__form{ max-width: 720px; margin: 24px auto 0; }
+.contact__form .card__body{ padding: 24px 24px 28px; }
+@media (min-width: 768px){ .contact__form .card__body{ padding: 28px 30px 32px; } }
+.field > span{ display:inline-block; font-weight:600; color:var(--am-ink); margin: 6px 0 6px; }
+.input{ width:100%; background:#fff; border:1px solid var(--am-border); border-radius:10px; padding:.75rem .9rem; }
+.input:focus{ outline:none; border-color:var(--am-ink); box-shadow:0 0 0 3px rgba(11,31,59,.10); }
 .btn--block{ width:100%; }
 
+/* ====== Gracias (más aire en la tarjeta) ====== */
+.thanks__card{
+  max-width: 780px;
+  margin: 24px auto 44px;
+}
+.thanks__body{
+  padding: 28px 32px;
+}
+@media (min-width: 900px){
+  .thanks__body{ padding: 36px 40px; }
+}
+.thanks__title{
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(28px, 2.6vw, 36px);
+  margin: 6px 0 10px;
+  color: var(--am-ink);
+}
+.thanks__desc{
+  margin: 0 0 18px;
+}
+.thanks__body .btn{
+  margin-top: 6px;
+}
+/* ===== Aviso legal: espaciados y contenedor ===== */
+
+/* Si no existía, define el aspecto suave de las tarjetas */
+.card--soft{
+  background: #fff;
+  border: 1px solid var(--am-border, #e6e8eb);
+  border-radius: var(--am-radius, 14px);
+  box-shadow: var(--am-shadow, 0 8px 24px rgba(0,0,0,.06));
+}
+
+/* Contenedor y márgenes exteriores de la tarjeta */
+.legal__card{
+  max-width: 940px;        /* ancho cómodo para lectura */
+  margin: 24px auto 64px;  /* separa del header y del footer */
+}
+
+/* Relleno interior (márgenes internos) */
+.legal__body{
+  padding: 28px 28px 32px;
+}
+
+@media (min-width: 1024px){
+  .legal__body{ padding: 40px 48px; }
+}
+
+/* Ritmo vertical dentro del texto legal */
+.legal__body h1{ margin: 0 0 .75rem; }
+.legal__body h2{ margin: 1.25rem 0 .5rem; }
+.legal__body p{ margin: .5rem 0; }
+.legal__body ul{ margin: .5rem 0 1rem 1.25rem; }
