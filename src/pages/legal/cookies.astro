@@ -1,7 +1,160 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+// Ajusta la fecha cuando hagas cambios de contenido.
+const lastUpdate = "01/11/2025";
 ---
-<BaseLayout title="Política de privacidad">
-  <h1>Política de privacidad</h1>
-  <p>Contenido en preparación.</p>
+
+<BaseLayout title="Cookies" description="Política de cookies del sitio.">
+  <section class="section">
+    <div class="wrap">
+      <article class="card card--soft legal__card">
+        <div class="legal__body prose">
+      <h1>Política de cookies</h1>
+      <p class="muted">Última actualización: {lastUpdate}</p>
+
+      <p>
+        En esta página te explico qué son las cookies y tecnologías similares, qué
+        uso hago de ellas en este sitio y cómo puedes gestionarlas. Esta política se
+        aplica al dominio principal y a sus subdominios.
+      </p>
+
+      <h2>1. ¿Qué son las cookies?</h2>
+      <p>
+        Las <strong>cookies</strong> y tecnologías similares (p. ej., localStorage o
+        píxeles) son pequeños archivos o mecanismos que se instalan en tu dispositivo
+        cuando navegas por un sitio web. Sirven para permitir o mejorar el
+        funcionamiento técnico del sitio, recordar preferencias, elaborar estadísticas
+        o mostrar publicidad personalizada.
+      </p>
+
+      <h2>2. Qué cookies utiliza este sitio</h2>
+      <p>
+        Actualmente este sitio <strong>no utiliza cookies no esenciales</strong> (p. ej., analíticas o publicitarias).
+        Únicamente se emplean, en su caso, <strong>cookies propias, de sesión y con
+        finalidad técnica</strong> (por ejemplo, las estrictamente necesarias para que
+        el formulario de contacto funcione o para la seguridad básica).
+      </p>
+
+      <div class="note">
+        <strong>Transparencia:</strong> si en el futuro incorporo cookies de análisis,
+        medición o publicidad, <em>actualizaré esta página</em> y el banner de
+        consentimiento para que puedas aceptarlas o rechazarlas de forma granular.
+      </div>
+
+      <h3>2.1. Resumen de cookies</h3>
+      <p class="muted">En este momento, la web funciona sin colocar cookies no necesarias.</p>
+
+      <div class="table-scroll">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Tipo</th>
+              <th>Finalidad</th>
+              <th>Propiedad</th>
+              <th>Duración</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>(sin cookies no esenciales)</td>
+              <td>—</td>
+              <td>—</td>
+              <td>—</td>
+              <td>—</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>3. Base legal</h2>
+      <p>
+        La instalación y uso de <strong>cookies no necesarias</strong> se basa en tu
+        <strong>consentimiento</strong>, que puedes otorgar mediante el banner de
+        configuración. El uso de <strong>cookies técnicas</strong> necesarias para
+        prestar el servicio solicitado se ampara en el <em>interés legítimo</em> y no
+        requiere consentimiento, pero te informo de su existencia aquí.
+      </p>
+
+      <h2>4. Cómo cambiar o retirar tu consentimiento</h2>
+      <ul>
+        <li>
+          <strong>Desde el banner o panel de preferencias:</strong> cuando existan
+          cookies no esenciales, podrás <em>aceptar/rechazar</em> por categorías y
+          <em>cambiar tu elección</em> en cualquier momento desde el enlace “Preferencias
+          de cookies” del pie de página.
+        </li>
+        <li>
+          <strong>Desde el navegador:</strong> puedes borrar, bloquear o limitar
+          cookies en Chrome, Firefox, Edge y Safari (Ajustes/Preferencias &gt; Privacidad
+          y seguridad &gt; Cookies y datos del sitio).
+        </li>
+      </ul>
+
+      <h2>5. Categorías de cookies (si en el futuro se usaran)</h2>
+      <ul>
+        <li>
+          <strong>Técnicas o necesarias:</strong> imprescindibles para el
+          funcionamiento básico del sitio (autenticación, seguridad, carga de
+          páginas, formularios).
+        </li>
+        <li>
+          <strong>Preferencias o personalización:</strong> recuerdan opciones como
+          idioma o diseño.
+        </li>
+        <li>
+          <strong>Analíticas o medición:</strong> permiten conocer el uso del sitio
+          (páginas vistas, secciones más consultadas) de forma agregada para mejorar
+          la experiencia.
+        </li>
+        <li>
+          <strong>Publicidad comportamental:</strong> muestran anuncios relevantes en
+          función de tu navegación.
+        </li>
+      </ul>
+
+      <h2>6. Transferencias internacionales</h2>
+      <p>
+        En la situación actual <strong>no realizo transferencias internacionales de
+        datos</strong> relacionadas con cookies. Si en el futuro empleara proveedores
+        ubicados fuera del EEE, verificaré la existencia de una decisión de
+        adecuación o, en su defecto, aplicaré garantías adecuadas (cláusulas
+        contractuales tipo) e informaré en esta política.
+      </p>
+
+      <h2>7. Conservación</h2>
+      <p>
+        Las cookies de sesión se eliminan al cerrar el navegador. Las cookies
+        persistentes (si se usaran) tendrían una duración máxima proporcional a su
+        finalidad (p. ej., analítica), según se detalle en la tabla de cookies.
+      </p>
+
+      <h2>8. Actualizaciones de esta política</h2>
+      <p>
+        Podré modificar esta política para adaptarla a cambios normativos o a nuevas
+        funcionalidades del sitio. Publicaré cualquier cambio relevante en esta
+        página con una nueva fecha de actualización.
+      </p>
+
+      <h2>9. Contacto</h2>
+      <p>
+        Para dudas sobre esta política, puedes escribirme a
+        {" "}
+        <a href="mailto:amariscalcantudo@gmail.com">amariscalcantudo@gmail.com</a>.
+      </p>
+
+      <hr />
+
+      <p class="muted" style="font-size:.95rem">
+        Información legal breve: el almacenamiento o acceso a información en tu
+        dispositivo requiere <strong>consentimiento previo</strong> salvo para
+        finalidades estrictamente técnicas o necesarias para prestar un servicio
+        expresamente solicitado por ti. También puedes retirar tu consentimiento en
+        cualquier momento.
+      </p>
+    </div>
+      </article>
+    </div>
+  </section>
 </BaseLayout>

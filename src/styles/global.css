@@ -329,3 +329,33 @@ h1,h2,h3,strong{color:var(--am-ink)}
 .thanks__body .btn{
   margin-top: 6px;
 }
+/* ===== Aviso legal: espaciados y contenedor ===== */
+
+/* Si no existía, define el aspecto suave de las tarjetas */
+.card--soft{
+  background: #fff;
+  border: 1px solid var(--am-border, #e6e8eb);
+  border-radius: var(--am-radius, 14px);
+  box-shadow: var(--am-shadow, 0 8px 24px rgba(0,0,0,.06));
+}
+
+/* Contenedor y márgenes exteriores de la tarjeta */
+.legal__card{
+  max-width: 940px;        /* ancho cómodo para lectura */
+  margin: 24px auto 64px;  /* separa del header y del footer */
+}
+
+/* Relleno interior (márgenes internos) */
+.legal__body{
+  padding: 28px 28px 32px;
+}
+
+@media (min-width: 1024px){
+  .legal__body{ padding: 40px 48px; }
+}
+
+/* Ritmo vertical dentro del texto legal */
+.legal__body h1{ margin: 0 0 .75rem; }
+.legal__body h2{ margin: 1.25rem 0 .5rem; }
+.legal__body p{ margin: .5rem 0; }
+.legal__body ul{ margin: .5rem 0 1rem 1.25rem; }

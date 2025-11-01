@@ -1,5 +1,5 @@
 ---
-title: "Portfolio personal (adrianmariscal.netlify.app)"
+title: "Portfolio Personal"
 description: "Sitio personal hecho con Astro. Blog, proyectos y contacto."
 tags: ["astro", "netlify", "forms", "typescript", "portfolio"]
 repoUrl:
