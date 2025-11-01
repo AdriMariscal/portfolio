@@ -1,14 +1,34 @@
 ---
-import type { CollectionEntry } from "astro:content";
-export interface Props { entry: CollectionEntry<"blog"> }
-const { entry } = Astro.props;
-const { title, description, date } = entry.data;
+import type { CollectionEntry } from 'astro:content';
+
+// Props: entry (post) y tope de etiquetas a mostrar (por defecto 4)
+const { entry, maxTags = 6 } = Astro.props as {
+  entry: CollectionEntry<'blog'>;
+  maxTags?: number;
+};
+
+const { data, slug } = entry;
+const tags: string[] = Array.isArray(data.tags) ? data.tags : [];
 ---
 
-<article class="card">
-  <h2 class="card-title">
-    <a href={`/blog/${entry.slug}/`}>{title}</a>
-  </h2>
-  {description && <p class="card-desc">{description}</p>}
-  {date && <p class="card-meta">{new Date(date).toLocaleDateString("es-ES")}</p>}
+<article class="card card--post">
+  <div class="card__body">
+    <h3 class="card__title postcard__title">
+      <a href={`/blog/${slug}/`}>{data.title}</a>
+  </h3>
+
+    {data.description && (
+      <p class="postcard__excerpt">{data.description}</p>
+    )}
+
+  {tags.length > 0 && (
+      <ul class="tags">
+        {tags.slice(0, maxTags).map((t) => (
+          <li>
+            <a class="tag" href={`/blog/tags/${encodeURIComponent(t).toLowerCase()}/`}>#{t}</a>
+          </li>
+      ))}
+    </ul>
+  )}
+    </div>
 </article>

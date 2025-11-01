@@ -1,39 +1,361 @@
-/* Reset y tokens */
-* { box-sizing: border-box; }
-html, body { margin: 0; }
+/* ---------- Reset + base ---------- */
+*,*::before,*::after{box-sizing:border-box}
+*{margin:0}
+html:focus-within{scroll-behavior:smooth}
+html,body{height:100%}
+body{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+img,picture,video,canvas,svg{display:block;max-width:100%}
+input,button,textarea,select{font:inherit}
+a{color:inherit;text-decoration:none}
+
+/* ---------- Tokens (colores, tipografía, radios, sombras) ---------- */
+/* Paleta y tokens según Guía de Marca v0.1 */
 :root{
-  --max: 1100px;
-  --fg: #0f172a;       /* texto */
-  --muted: #475569;    /* texto desaturado */
-  --line: #e2e8f0;     /* bordes */
-  --chip: #f1f5f9;
-  --link: #0ea5e9;
-  --radius: 12px;
+  --am-ink:#0B1F3B;
+  --am-accent:#21B6A8;
+  --am-graphite:#162433;
+  --am-cloud:#E6EEF4;
+  --am-bg:#F8FAFC;
+  --am-text:#0A1020;
+  --am-success:#0FA47A;
+  --am-warn:#F59E0B;
+  --am-error:#E11D48;
+
+  --am-border:#E2E8F0;
+  --am-radius:12px;
+  --am-radius-pill:9999px;
+  --am-shadow:0 10px 30px rgba(11,31,59,0.08);
+
+  --am-maxw:1200px;
+  --am-gutter:24px;
+  --section-pad:56px;
+
+  --font-ui: Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
+  --font-display: Sora, Inter, system-ui, sans-serif;
+
+    /* Acento suave para chips */
+  --am-accent-soft: #E6FAF6;
+  --am-accent-border: #BFEAE1;
 }
 
-body{
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
-  color: var(--fg);
-  line-height: 1.6;
+html,body{
+  background:var(--am-bg);
+  color:var(--am-text);
+  font-family:var(--font-ui);
+  line-height:1.55;
+}
+h1,h2,h3{line-height:1.2}
+h1,h2,h3,strong{color:var(--am-ink)}
+
+/* ---------- Helpers ---------- */
+.wrap{max-width:var(--am-maxw);margin-inline:auto;padding-inline:16px}
+.section{padding-block:var(--section-pad)}
+.h2{font-size:1.75rem;font-weight:700;margin-bottom:16px}
+.muted{color:var(--am-graphite)}
+.stack{display:flex;flex-direction:column;gap:var(--stack-gap,16px)}
+.grid{display:grid;gap:16px}
+.grid--3{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media (max-width:900px){.grid--3{grid-template-columns:1fr}}
+.card{
+  background:#fff;
+  border:1px solid var(--am-border);
+  border-radius:var(--am-radius);
+  box-shadow:var(--am-shadow);
+}
+.card__body{padding:18px}
+.card__title{font-size:1.25rem;font-weight:700;color:var(--am-ink)}
+
+/* ---------- Header ---------- */
+.header{
+  position:sticky;top:0;z-index:10;
+  background:rgba(248,250,252,0.7);
+  backdrop-filter:saturate(140%) blur(12px);
+  -webkit-backdrop-filter:saturate(140%) blur(12px);
+  border-bottom:1px solid var(--am-border);
+}
+.header__inner{display:flex;align-items:center;justify-content:space-between;height:64px}
+.brand{font-family:var(--font-display);font-weight:800;letter-spacing:.2px;color:var(--am-ink)}
+.nav{display:flex;gap:18px}
+.nav__link{padding:8px 10px;border-radius:10px;color:var(--am-graphite)}
+.nav__link[aria-current="true"]{
+  background:rgba(11,31,59,.08);
+  color:var(--am-ink);
 }
 
-/* Enlaces */
-a{ color: var(--link); text-decoration: none; }
-a:hover{ text-decoration: underline; }
+/* ---------- Hero ---------- */
+.hero{background:var(--am-cloud)}
+.hero__title{
+  font-family:var(--font-display);
+  font-size:clamp(2rem,2vw+2rem,3rem);
+  font-weight:800;
+  color:var(--am-ink);
+  margin-bottom:8px;
+}
+.hero__lead{color:var(--am-graphite)}
+.hero__stats .card__title{font-size:1.4rem}
 
-/* Contenedores y layout */
-.container{ max-width: var(--max); margin-inline: auto; padding: 1rem; }
-.stack > * + *{ margin-top: 1rem; }
+/* ---------- Botones ---------- */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  height:44px;padding:0 16px;border-radius:var(--am-radius);
+  font-weight:600;border:1px solid transparent;transition:.15s ease;
+}
+.btn--primary{
+  background:var(--am-ink);color:#fff;border-color:var(--am-ink);
+  box-shadow:var(--am-shadow);
+}
+.btn--primary:hover{filter:brightness(0.97)}
+.btn--secondary{
+  background:#fff;color:var(--am-ink);border-color:var(--am-ink)
+}
+.btn--secondary:hover{background:var(--am-cloud)}
 
-header{ border-bottom: 1px solid var(--line); }
-header .bar{ display: flex; justify-content: space-between; align-items: center; }
-header nav ul{ display: flex; gap: 1rem; list-style: none; margin: 0; padding: 0; }
+/* ---------- Badge ---------- */
+.badge{
+  display:inline-flex;align-items:center;height:26px;padding:0 10px;
+  border-radius:var(--am-radius-pill);font-size:.82rem;
+  border:1px solid var(--am-border);color:var(--am-graphite);background:#fff
+}
+h1,h2,h3{line-height:1.2}
+h1,h2,h3,strong{color:var(--am-ink)}
 
-footer{ border-top: 1px solid var(--line); margin-top: 3rem; padding: 1.5rem 0; text-align: center; }
+/* Variante específica para "active": estilo outline para diferenciar de chips */
+.badge--active{
+  border-color: var(--am-accent);
+  color: var(--am-accent);
+  background: transparent;
+}
 
-.muted{ color: var(--muted); }
+/* ---------- Chips / Tags ---------- */
+.tags{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  list-style:none;
+  padding:0;
+  margin:0;
+}
+.tag{
+  display:inline-flex;align-items:center;
+  height:24px;
+  padding:0 10px;
+  border-radius:var(--am-radius-pill);
+  background:var(--am-accent-soft);
+  border:1px solid var(--am-accent-border);
+  color:var(--am-graphite);
+  font-weight:600;
+  font-size:.8rem;
+  line-height:1;
+  box-shadow:0 1px 0 rgba(11,31,59,.04);
+  transition:background .15s ease, transform .05s ease;
+}
 
-/* Grillas y tarjetas */
-.grid{ display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
-.card{ border: 1px solid var(--line); border-radius: var(--radius); padding: 1rem; }
-.chip{ font-size: .8rem; background: var(--chip); padding: .1rem .5rem; border-radius: 999px; }
+/* ---------- Footer ---------- */
+.footer{
+  border-top:1px solid var(--am-border);
+  padding-block:24px;
+  color:var(--am-graphite);
+}
+.footer__inner{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  text-align:center;
+}
+.footer__nav{
+  display:flex;
+  gap:14px;
+  flex-wrap:wrap;
+  justify-content:center;
+}
+.footer__link{font-size:.9rem;opacity:.85}
+.footer__link:hover{opacity:1;color:var(--am-ink);text-decoration:underline}
+.footer__copy{font-weight:600}
+
+/* --- Ajustes de layout y listas en fichas --- */
+.section--tight{ padding-top:24px; padding-bottom:0 }
+.stack{ list-style:none; padding:0; margin:0 }
+.prose h2{font-size:1.25rem;margin:12px 0 8px}
+.prose h3{font-size:1.05rem;margin:10px 0 6px}
+.prose p{margin:8px 0}
+.prose ul{padding-left:1.25rem; margin:6px 0}
+.prose li{margin:4px 0}
+.prose code{
+  background:#f3f5f9;border:1px solid var(--am-border);border-radius:6px;padding:0 .25rem;font-size:.9em;
+}
+.prose-list{margin-top:.5rem;padding-left:1.25rem;list-style:disc}
+
+/* --- Ajustes de spacing específicos para tarjetas del blog --- */
+.card--post .card__body { padding: 22px; }
+.card--post .postcard__title { margin: 0 0 10px; }
+.postcard__excerpt { margin: 0 0 12px; color: var(--am-graphite); }
+.card--post .tags { margin-top: 10px; }
+
+/* ============ POST (scoped) ============ */
+.post .wrap { max-width: 980px; }
+.post__card { margin: 8px auto 48px; }
+.post__body { padding: 28px 28px 32px; }
+
+.post__title {
+  font-size: clamp(28px, 3.2vw, 34px);
+  line-height: 1.2;
+  margin: 0 0 .4rem;
+}
+
+.post__desc { margin: .15rem 0 1rem; }
+
+/* Meta (fecha + tags) */
+.post__meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  margin: 4px 0 18px;
+}
+.post__date { font-size: 14px; color: var(--text-muted, #5b6572); }
+
+/* Tags pequeñas */
+.tags--sm .tag {
+  font-size: 12.5px;
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+
+/* Contenido del MD */
+.post__prose { margin-top: 10px; line-height: 1.7; }
+.post__prose p { margin: 0 0 1rem; }
+.post__prose h2 { font-size: 22px; margin: 1.6rem 0 .6rem; }
+.post__prose h3 { font-size: 18px; margin: 1.2rem 0 .5rem; }
+.post__prose ul,
+.post__prose ol { margin: .5rem 0 1.1rem 1.2rem; padding-left: 1rem; }
+.post__prose li { margin: .25rem 0; }
+.post__prose blockquote {
+  margin: 1.2rem 0;
+  padding: .8rem 1rem;
+  border-left: 4px solid rgba(0,0,0,.08);
+  background: rgba(0,0,0,.03);
+  border-radius: 8px;
+}
+.post__prose pre {
+  margin: 1.1rem 0;
+  padding: .85rem 1rem;
+  background: #0f172a10;
+  border-radius: 10px;
+  overflow: auto;
+}
+.post__prose code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-size: .95em;
+}
+.post__prose img, 
+.post__prose video, 
+.post__prose iframe {
+  max-width: 100%;
+  height: auto;
+  border-radius: 10px;
+  margin: .6rem 0;
+}
+.post__prose hr {
+  border: 0;
+  height: 1px;
+  background: rgba(0,0,0,.08);
+  margin: 1.6rem 0;
+}
+
+/* --- Ajustes de layout y listas en fichas --- */
+.section--tight{ padding-top:24px; padding-bottom:0 }
+
+/* La lista “stack” del changelog no debe mostrar viñetas ni sangrías externas */
+.stack{
+  list-style:none;
+  padding:0;
+  margin:0;
+}
+
+/* Estilo ligero para el Markdown interno de la ficha */
+.prose h2{font-size:1.25rem;margin:12px 0 8px}
+.prose h3{font-size:1.05rem;margin:10px 0 6px}
+.prose p{margin:8px 0}
+.prose ul{padding-left:1.25rem; margin:6px 0}
+.prose li{margin:4px 0}
+.prose code{
+  background:#f3f5f9;
+  border:1px solid var(--am-border);
+  border-radius:6px;
+  padding:0 .25rem;
+  font-size:.9em;
+}
+
+/* Lista interna del changelog para que el “*” quede dentro de la tarjeta */
+.prose-list{
+  margin-top:.5rem;
+  padding-left:1.25rem;
+  list-style:disc;
+}
+
+/* ====== Contacto (mejorar respiración del formulario) ====== */
+.contact__intro{ margin: 6px 0 18px; }
+.contact__form{ max-width: 720px; margin: 24px auto 0; }
+.contact__form .card__body{ padding: 24px 24px 28px; }
+@media (min-width: 768px){ .contact__form .card__body{ padding: 28px 30px 32px; } }
+.field > span{ display:inline-block; font-weight:600; color:var(--am-ink); margin: 6px 0 6px; }
+.input{ width:100%; background:#fff; border:1px solid var(--am-border); border-radius:10px; padding:.75rem .9rem; }
+.input:focus{ outline:none; border-color:var(--am-ink); box-shadow:0 0 0 3px rgba(11,31,59,.10); }
+.btn--block{ width:100%; }
+
+/* ====== Gracias (más aire en la tarjeta) ====== */
+.thanks__card{
+  max-width: 780px;
+  margin: 24px auto 44px;
+}
+.thanks__body{
+  padding: 28px 32px;
+}
+@media (min-width: 900px){
+  .thanks__body{ padding: 36px 40px; }
+}
+.thanks__title{
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(28px, 2.6vw, 36px);
+  margin: 6px 0 10px;
+  color: var(--am-ink);
+}
+.thanks__desc{
+  margin: 0 0 18px;
+}
+.thanks__body .btn{
+  margin-top: 6px;
+}
+/* ===== Aviso legal: espaciados y contenedor ===== */
+
+/* Si no existía, define el aspecto suave de las tarjetas */
+.card--soft{
+  background: #fff;
+  border: 1px solid var(--am-border, #e6e8eb);
+  border-radius: var(--am-radius, 14px);
+  box-shadow: var(--am-shadow, 0 8px 24px rgba(0,0,0,.06));
+}
+
+/* Contenedor y márgenes exteriores de la tarjeta */
+.legal__card{
+  max-width: 940px;        /* ancho cómodo para lectura */
+  margin: 24px auto 64px;  /* separa del header y del footer */
+}
+
+/* Relleno interior (márgenes internos) */
+.legal__body{
+  padding: 28px 28px 32px;
+}
+
+@media (min-width: 1024px){
+  .legal__body{ padding: 40px 48px; }
+}
+
+/* Ritmo vertical dentro del texto legal */
+.legal__body h1{ margin: 0 0 .75rem; }
+.legal__body h2{ margin: 1.25rem 0 .5rem; }
+.legal__body p{ margin: .5rem 0; }
+.legal__body ul{ margin: .5rem 0 1rem 1.25rem; }

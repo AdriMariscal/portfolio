@@ -1,0 +1,171 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+// Si quieres mostrar la fecha automática, cámbiala por:
+// const updatedAt = new Date().toLocaleDateString("es-ES");
+const updatedAt = "01/11/2025";
+---
+
+<BaseLayout title="Términos y condiciones" description="Condiciones de uso del sitio y, en su caso, contratación a distancia.">
+  <section class="section">
+    <div class="wrap">
+      <article class="card card--soft legal__card">
+        <div class="legal__body prose">
+  <h1>Términos y condiciones</h1>
+          <p class="muted">Última actualización: {updatedAt}</p>
+
+      <p>
+        Este documento regula las condiciones de acceso y uso del sitio web
+        (el “Sitio”) y, en su caso, las condiciones generales aplicables a
+        encargos de servicios realizados a distancia. La navegación por el Sitio
+        o la solicitud de servicios implica la aceptación de estos términos.
+        Para cualquier duda, puedes escribir a la dirección indicada en el
+        <a href="/legal/aviso-legal">Aviso legal</a>.
+      </p>
+
+      <ol class="legal__list">
+        <li id="objeto">
+          <h2>1. Objeto del Sitio</h2>
+          <p>
+            El Sitio tiene finalidad informativa y de portfolio profesional.
+            Eventualmente puede facilitar la toma de contacto para estudiar
+            encargos de servicios. Las obligaciones de información del titular y
+            del prestador de servicios se atienden conforme a la Ley 34/2002 de
+            servicios de la sociedad de la información y comercio electrónico
+            (LSSI) y, cuando proceda, la normativa de consumo sobre contratos a
+            distancia.
+          </p>
+        </li>
+
+        <li id="acceso-uso">
+          <h2>2. Acceso y reglas de uso</h2>
+          <ul>
+            <li>El acceso es libre y gratuito, salvo coste de conexión del proveedor del usuario.</li>
+            <li>El usuario se compromete a usar el Sitio de buena fe, sin vulnerar derechos de terceros ni la normativa aplicable.</li>
+            <li>No está permitido introducir o propagar malware, realizar ingeniería inversa de capas no públicas, ni usar el Sitio para fines ilícitos.</li>
+            <li>El titular puede suspender temporalmente el acceso por mantenimiento, seguridad o mejora del servicio.</li>
+          </ul>
+        </li>
+
+        <li id="registro">
+          <h2>3. Registro y comunicaciones</h2>
+          <p>
+            En general no se exige registro. Si para ciertas funciones se
+            habilitara autenticación/áreas privadas, el usuario mantendrá la
+            confidencialidad de sus credenciales y notificará usos no
+            autorizados. Las comunicaciones con el titular podrán realizarse a
+            través de los canales indicados en el Sitio.
+          </p>
+        </li>
+
+        <li id="contratacion">
+          <h2>4. Encargos de servicios y contratación a distancia (si procede)</h2>
+          <p>
+            Si, tras el contacto, las partes acuerdan un servicio, la
+            contratación se formalizará por escrito (presupuesto y condiciones
+            particulares). En la contratación a distancia con consumidores
+            resultan de aplicación las normas del Real Decreto Legislativo
+            1/2007 (TRLGDCU), incluyendo información precontractual clara y
+            derecho de desistimiento cuando proceda.
+          </p>
+          <ul>
+            <li><strong>Precios y pagos.</strong> Se indicarán siempre antes de contratar. Los importes pueden incluir o no impuestos según se detalle en el presupuesto.</li>
+            <li><strong>Desistimiento.</strong> En servicios, el derecho legal de desistimiento de 14 días puede no aplicar una vez ejecutado completamente el servicio o cuando el cliente haya solicitado el inicio durante el plazo de desistimiento, lo que se reconocerá expresamente en el encargo.</li>
+            <li><strong>Entregables y plazos.</strong> Se fijarán en las condiciones particulares. El cliente facilitará la información necesaria y aprobará hitos cuando corresponda.</li>
+            <li><strong>Atención de reclamaciones y resolución de litigios en línea (ODR).</strong> El usuario consumidor puede acudir a la plataforma ODR de la Comisión Europea:
+              <a href="https://ec.europa.eu/consumers/odr" target="_blank" rel="noopener noreferrer">https://ec.europa.eu/consumers/odr</a>.
+            </li>
+          </ul>
+        </li>
+
+        <li id="propiedad-intelectual">
+          <h2>5. Propiedad intelectual e industrial</h2>
+          <p>
+            Salvo indicación expresa, los contenidos del Sitio (textos, gráficos,
+            imágenes, código, diseño y marcas) son del titular o se utilizan con
+            licencias que lo permiten. Queda prohibida su reproducción,
+            distribución, comunicación pública o transformación más allá de los
+            límites legalmente permitidos sin autorización previa. Los logos y
+            marcas de terceros pertenecen a sus propietarios.
+          </p>
+        </li>
+
+        <li id="enlaces">
+          <h2>6. Enlaces</h2>
+          <p>
+            El Sitio puede incluir enlaces a páginas externas. El titular no es
+            responsable de sus contenidos o disponibilidad. La inclusión de
+            enlaces no implica relación, recomendación o aprobación de los
+            mismos.
+          </p>
+        </li>
+
+        <li id="privacidad">
+          <h2>7. Privacidad y cookies</h2>
+          <p>
+            El tratamiento de datos personales se rige por la
+            <a href="/legal/privacidad">Política de privacidad</a> (RGPD/LOPDGDD).
+            La instalación y uso de cookies o tecnologías similares se detalla en la
+            <a href="/legal/cookies">Política de cookies</a>.
+          </p>
+        </li>
+
+        <li id="responsabilidad">
+          <h2>8. Responsabilidad</h2>
+          <ul>
+            <li>El Sitio se ofrece “tal cual” y en función de disponibilidad razonable.</li>
+            <li>El titular adopta medidas para que la información sea exacta y esté actualizada, sin garantía absoluta de ausencia de errores u omisiones.</li>
+            <li>El usuario es responsable del uso que haga del Sitio y de la información que facilite.</li>
+            <li>Sin excluir responsabilidades que no puedan limitarse por ley, el titular no responderá por (i) indisponibilidad temporal; (ii) daños indirectos; (iii) uso fraudulento del Sitio por terceros.</li>
+          </ul>
+        </li>
+
+        <li id="nulidad">
+          <h2>9. Nulidad parcial</h2>
+          <p>
+            Si alguna cláusula fuera nula o ineficaz, se tendrá por no puesta,
+            sin afectar a la validez del resto. Se interpretará conforme a la
+            finalidad de estos términos y la normativa aplicable.
+          </p>
+        </li>
+
+        <li id="modificaciones">
+          <h2>10. Cambios en los términos</h2>
+          <p>
+            El titular podrá modificar estos términos cuando resulte necesario.
+            Las versiones vigentes se publicarán en esta página con su fecha de
+            actualización. El uso del Sitio tras los cambios implica su
+            aceptación.
+          </p>
+        </li>
+
+        <li id="ley-jurisdiccion">
+          <h2>11. Ley aplicable y jurisdicción</h2>
+          <p>
+            Estos términos se rigen por la legislación española (incluida la
+            normativa especial de consumidores cuando proceda). Salvo que una
+            norma imperativa disponga otro fuero, cualquier controversia se
+            someterá a los Juzgados y Tribunales de Málaga (España).
+          </p>
+        </li>
+
+        <li id="contacto">
+          <h2>12. Contacto</h2>
+          <p>
+            Para consultas relativas a estos términos, puedes escribir a la
+            dirección de contacto indicada en el
+            <a href="/legal/aviso-legal">Aviso legal</a>.
+          </p>
+        </li>
+      </ol>
+
+      <nav class="legal__nav">
+        <a href="/legal/aviso-legal">Aviso legal</a> ·
+        <a href="/legal/privacidad">Privacidad</a> ·
+        <a href="/legal/cookies">Cookies</a>
+      </nav>
+    </div>
+      </article>
+    </div>
+  </section>
+</BaseLayout>

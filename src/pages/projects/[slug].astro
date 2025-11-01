@@ -3,7 +3,6 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import { getCollection, getEntryBySlug } from "astro:content";
 
 export async function getStaticPaths() {
-  // Solo generamos páginas para proyectos publicados
   const projects = await getCollection("projects", ({ data }) => data.published !== false);
   return projects.map((p) => ({ params: { slug: p.slug } }));
 }
@@ -17,7 +16,6 @@ if (!entry) throw new Error(`Proyecto no encontrado: ${slug}`);
 const { Content } = await entry.render();
 const data = entry.data;
 
-// Última versión (arriba en el array)
 const latest = data.changelog?.[0];
 const latestVersion = latest?.version ?? null;
 const lastUpdate = latest?.date ?? data.date;
@@ -25,54 +23,79 @@ const lastUpdate = latest?.date ?? data.date;
 function fmt(d: Date | string) {
   try { return new Date(d).toLocaleDateString("es-ES"); } catch { return String(d); }
 }
+
+// Asegura que cualquier URL sin protocolo sea absoluta (https://)
+function ensureAbs(url?: string) {
+  if (!url) return undefined;
+  return /^https?:\/\//i.test(url) ? url : `https://${url}`;
+}
 ---
 
 <BaseLayout title={`${data.title} · Proyecto`} description={data.description}>
-  <article class="prose prose-slate dark:prose-invert max-w-none">
-    <h1 class="!mb-2">{data.title}</h1>
+  <section class="section">
+    <div class="wrap">   {/** antes usábamos "container"; debe ser "wrap" **/}
 
-    <p class="text-sm text-gray-500 !mt-0">
-      <strong>Estado:</strong> {data.status}
-    {latestVersion && (
-        <> · <strong>Última versión:</strong> {latestVersion} <small>({fmt(lastUpdate)})</small></>
-    )}
-  </p>
+      <article class="card">
+        <div class="card__body">
+          <h1 class="card__title" style="margin-bottom:.5rem">{data.title}</h1>
 
-    {(data.repoUrl || data.demoUrl) && (
-      <p class="!mt-2">
-        {data.repoUrl && <a href={data.repoUrl} target="_blank" rel="noopener noreferrer">Código</a>}
-        {data.repoUrl && data.demoUrl && " · "}
-        {data.demoUrl && <a href={data.demoUrl} target="_blank" rel="noopener noreferrer">Demo</a>}
-    </p>
-  )}
+          <p style="margin:.25rem 0 1rem; color:var(--am-graphite,#162433); font-size:.95rem">
+            <strong>Estado:</strong> {data.status}
+            {latestVersion ? ` · ` : ""}
+            {latestVersion ? <><strong>Última versión:</strong> {latestVersion} <small>({fmt(lastUpdate)})</small></> : null}
+          </p>
 
-    {data.tags?.length ? (
-      <p class="!mt-2"><strong>Tecnologías:</strong> {data.tags.join(", ")}</p>
-  ) : null}
+          {(data.projectUrl || data.repoUrl || data.demoUrl) && (
+            <p style="margin:.25rem 0 1rem">
+              {data.projectUrl && (
+                <a class="link" href={ensureAbs(data.projectUrl)} target="_blank" rel="noopener noreferrer">Ver proyecto</a>
+              )}
+              {data.projectUrl && (data.repoUrl || data.demoUrl) && " · "}
+              {data.repoUrl && (
+                <a class="link" href={ensureAbs(data.repoUrl)} target="_blank" rel="noopener noreferrer">Código</a>
+              )}
+              {data.repoUrl && data.demoUrl && " · "}
+              {data.demoUrl && (
+                <a class="link" href={ensureAbs(data.demoUrl)} target="_blank" rel="noopener noreferrer">Demo</a>
+              )}
+            </p>
+          )}
 
-  <hr />
+          {data.tags?.length ? (
+            <p style="margin:.25rem 0 1rem"><strong>Tecnologías:</strong> {data.tags.join(", ")}</p>
+          ) : null}
 
-  {/* Cuerpo del proyecto en Markdown */}
-  <Content />
-  </article>
+          <hr style="border:none; border-top:1px solid var(--am-border); margin:12px 0" />
 
-  {data.changelog?.length ? (
-    <section class="mt-10">
-      <h2>Changelog</h2>
-      <ul class="not-prose space-y-4">
-        {data.changelog.map((rel) => (
-          <li class="rounded-2xl border border-slate-200 dark:border-slate-800 p-4">
-            <div class="font-semibold">
-              {rel.version} <span class="text-sm text-gray-500">({fmt(rel.date)})</span>
-            </div>
-            <ul class="mt-2 list-disc pl-5">
-              {rel.changes.map((c) => (
-                <li><code>{c.type}</code> {c.text}</li>
-              ))}
-            </ul>
-          </li>
-        ))}
-      </ul>
-    </section>
-  ) : null}
+          {/* Cuerpo del proyecto en Markdown con estilo "prose" */}
+          <div class="prose">
+            <Content />
+          </div>
+        </div>
+      </article>
+
+      {data.changelog?.length ? (
+        <section class="section section--tight">
+          <h2 class="h2">Changelog</h2>
+          <ul class="stack">
+            {data.changelog.map((rel) => (
+              <li class="card">
+                <div class="card__body">
+                  <div class="card__title">
+                    {rel.version} <span style="font-size:.9rem; color:#6b7280">({fmt(rel.date)})</span>
+                  </div>
+                  <ul class="prose-list">
+                    {rel.changes.map((c) => (
+                      <li><code>{c.type}</code> {c.text}</li>
+                    ))}
+                  </ul>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
+    </div>
+  </section>
 </BaseLayout>

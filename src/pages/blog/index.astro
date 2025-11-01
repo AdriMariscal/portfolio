@@ -3,26 +3,26 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import PostCard from "../../components/PostCard.astro";
 import { getCollection } from "astro:content";
 
-// Trae TODO y ordénalo por fecha desc, sin filtrar en exceso
-const all = await getCollection("blog");
-const posts = all
-  .filter((p) => p.data.published !== false)
+// 9 últimos posts, más nuevos primero (ignora borradores si usas `draft: true`)
+const posts = (await getCollection("blog"))
+  .filter((p) => !p.data.draft)
   .sort((a, b) => {
-    const ad = a.data.date ? new Date(a.data.date).getTime() : 0;
-    const bd = b.data.date ? new Date(b.data.date).getTime() : 0;
+    const ad = new Date(a.data.date ?? 0).getTime();
+    const bd = new Date(b.data.date ?? 0).getTime();
     return bd - ad;
-  });
+  })
+  .slice(0, 9);
 ---
 
-<BaseLayout title="Blog · Adrián Mariscal" current="blog">
-  <section class="py-10">
-    <h1 class="text-3xl font-bold mb-6">Blog</h1>
+<BaseLayout title="Blog">
+  <main class="section">
+    <div class="wrap">
+      <h1 class="h2" style="font-size:2rem;margin-bottom:18px">Blog</h1>
 
-    <!-- DEBUG opcional: quita esto cuando veas el número correcto -->
-    <!-- <p>Posts encontrados: {posts.length}</p> -->
-
-    <div class="card-grid">
-      {posts.map((p) => <PostCard entry={p} />)}
+      <!-- cuadrícula 3x3 igual que en “Últimos artículos” -->
+      <div class="grid grid--3" style="--stack-gap:16px">
+        {posts.map((entry) => <PostCard entry={entry} />)}
+        </div>
     </div>
-  </section>
+  </main>
 </BaseLayout>

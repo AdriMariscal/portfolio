@@ -1,24 +1,65 @@
 ---
+// src/pages/projects/index.astro
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import ProjectCard from "../../components/ProjectCard.astro";
 import { getCollection } from "astro:content";
 
-const all = await getCollection(
-  "projects",
-  ({ data }) => data.published !== false,
-);
-const projects = all.sort((a, b) => {
-  const ad = a.data.date ? new Date(a.data.date).getTime() : 0;
-  const bd = b.data.date ? new Date(b.data.date).getTime() : 0;
-  return bd - ad;
-});
+// Traemos todos los proyectos
+const all = await getCollection("projects");
+
+// Normalizamos estado
+const norm = (s: unknown) => String(s ?? "").trim().toLowerCase();
+
+// Partimos en activos / inactivos
+const active = all.filter((p) => norm(p.data.status) === "active");
+const inactive = all.filter((p) => norm(p.data.status) !== "active");
+
+// Orden: primero por 'order' si existe, luego por título
+const byOrderThenTitle = (a: any, b: any) =>
+  (a.data.order ?? 999) - (b.data.order ?? 999) ||
+  String(a.data.title ?? "").localeCompare(String(b.data.title ?? ""));
+
+active.sort(byOrderThenTitle);
+inactive.sort(byOrderThenTitle);
+
+// SEO
+const pageTitle = "Proyectos · Adrián Mariscal";
+const pageDescription =
+  "Proyectos propios y micro-productos. Marca “active” indica los que están en marcha ahora mismo.";
 ---
 
-<BaseLayout title="Proyectos · Adrián Mariscal" current="projects">
-  <section class="py-10">
-    <h1 class="text-3xl font-bold">Proyectos</h1>
-    <div class="card-grid">
-      {projects.map((p) => <ProjectCard entry={p} />)}
+<BaseLayout title={pageTitle} description={pageDescription}>
+  <!-- Cabecera de página -->
+  <section class="section">
+    <div class="wrap">
+      <h1 class="hero__title">Proyectos</h1>
+      <p class="hero__lead">
+        Proyectos propios y micro-productos. La marca <strong>active</strong> indica los que están en marcha.
+      </p>
     </div>
   </section>
+
+  {/* Activos */}
+  {active.length > 0 && (
+    <section class="section">
+      <div class="wrap">
+        <h2 class="h2">Activos</h2>
+        <div class="stack" style="--stack-gap:18px">
+          {active.map((p) => <ProjectCard entry={p} />)}
+        </div>
+      </div>
+    </section>
+  )}
+
+  {/* Inactivos */}
+  {inactive.length > 0 && (
+    <section class="section">
+      <div class="wrap">
+        <h2 class="h2">Inactivos</h2>
+        <div class="stack" style="--stack-gap:18px">
+          {inactive.map((p) => <ProjectCard entry={p} />)}
+        </div>
+      </div>
+    </section>
+  )}
 </BaseLayout>

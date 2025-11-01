@@ -1,43 +1,132 @@
 ---
 import type { CollectionEntry } from "astro:content";
 
-interface Props {
-  entry: CollectionEntry<"projects">;
+type WithEntry = { entry: CollectionEntry<"projects">; href?: string };
+type WithProps = {
+  entry?: undefined;
+  title: string;
+  description?: string;
+  tags?: string[];
+  repoUrl?: string;
+  demoUrl?: string;
+  projectUrl?: string; // <— NUEVO
+  href: string;
+};
+
+const props = Astro.props as WithEntry | WithProps;
+
+function slugifyTag(t: string) {
+  return encodeURIComponent(
+    t
+      .trim()
+      .normalize("NFD")
+      .replace(/\p{Diacritic}/gu, "")
+      .toLowerCase()
+      .replace(/\s+/g, "-")
+  );
 }
-const { entry } = Astro.props;
-const { data, slug } = entry;
-const latest = data.changelog?.[0];
+
+// Prefija https:// si falta para que no sea ruta interna
+function toExternal(u: string) {
+  const s = (u ?? "").trim();
+  if (!s) return "";
+  return /^https?:\/\//i.test(s) ? s : `https://${s.replace(/^\/+/, "")}`;
+}
+
+let title: string;
+let description = "";
+let tags: string[] = [];
+let repo = "";
+let demo = "";
+let project = ""; // <— NUEVO
+let status = "";
+let slugHref = "#";
+
+if ("entry" in props && props.entry) {
+  const { data, slug } = props.entry;
+  title = data.title ?? "Proyecto sin título";
+  description = data.description ?? "";
+  tags = Array.isArray(data.tags) ? data.tags : [];
+  repo = (data as any).repoUrl ?? "";
+  demo = (data as any).demoUrl ?? "";
+  project = (data as any).projectUrl ?? ""; // <— NUEVO
+  status = (data as any).status ?? "";
+  slugHref = props.href ?? `/projects/${slug}`;
+} else {
+  title = props.title;
+  description = props.description ?? "";
+  tags = props.tags ?? [];
+  repo = props.repoUrl ?? "";
+  demo = props.demoUrl ?? "";
+  project = props.projectUrl ?? ""; // <— NUEVO
+  status = "";
+  slugHref = props.href;
+}
 ---
 
-<article class="rounded-2xl border border-slate-200 dark:border-slate-800 p-5 hover:shadow transition">
-  <a href={`/projects/${slug}/`} class="block">
-    <h3 class="text-xl font-semibold">{data.title}</h3>
-    <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">{data.description}</p>
+<article class="project-card card">
+  <div class="card__body">
+    <header class="project-card__head">
+      <h3 class="card__title"><a href={slugHref}>{title}</a></h3>
+      {status && <span class="badge badge--active">{status}</span>}
+    </header>
 
-    {data.tags?.length > 0 && (
-      <ul class="mt-2 flex flex-wrap gap-2">
-        {data.tags.map((t) => (
-          <li class="text-xs bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded">
-            {t}
-          </li>
-        ))}
-      </ul>
+    {description && <p class="muted">{description}</p>}
+
+    {(project || repo || demo || tags.length) && (
+      <footer class="card__meta">
+        <ul class="links" aria-label="Enlaces">
+          {repo && (
+            <li>
+              <a class="link" href={toExternal(repo)} target="_blank" rel="noopener">Código</a>
+            </li>
+          )}
+          {demo && (
+            <li>
+              <a class="link" href={toExternal(demo)} target="_blank" rel="noopener">Demo</a>
+            </li>
+          )}
+          {project && (
+            <li>
+              <a class="link" href={toExternal(project)} target="_blank" rel="noopener">Ver proyecto</a>
+            </li>
+          )}
+        </ul>
+
+        {tags.length ? (
+          <ul class="tags" aria-label="Etiquetas">
+            {tags.map((t) => (
+              <li>
+                <a class="tag" href={`/blog/tags/${slugifyTag(t)}`}>#{t}</a>
+              </li>
+            ))}
+          </ul>
+        ) : null}
+      </footer>
     )}
-  </a>
-
-  {(data.repoUrl || data.demoUrl) && (
-    <div class="mt-3 flex gap-3 text-sm">
-      {data.repoUrl && (
-        <a class="underline" href={data.repoUrl} target="_blank" rel="noopener noreferrer">Código</a>
-      )}
-      {data.demoUrl && (
-        <a class="underline" href={data.demoUrl} target="_blank" rel="noopener noreferrer">Demo</a>
-      )}
-    </div>
-  )}
-
-  <p class="mt-2 text-sm text-gray-500">
-    {data.status}
-    {latest ? ` · ${latest.version} (${new Date(latest.date).toLocaleDateString("es-ES")})` : ""}
-  </p>
+  </div>
 </article>
+
+<style>
+/* Más aire dentro de la tarjeta, solo para ProjectCard */
+.project-card .card__body{padding:22px}
+
+/* Cabecera con separación cómoda */
+.project-card__head{
+  display:flex;gap:12px;align-items:center;justify-content:space-between;
+  margin-bottom:10px
+}
+
+/* Bloque meta: enlaces a la izquierda, chips a la derecha; envuelven en móvil */
+.card__meta{
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:12px;margin-top:14px
+}
+
+/* Listados horizontales con buen gap */
+.links,.tags{display:flex;gap:12px;list-style:none;margin:0;padding:0;flex-wrap:wrap}
+
+/* Enlaces “Código/Demo/Ver proyecto” con subrayado discreto */
+.link{text-decoration:underline}
+.link:hover{text-decoration:none}
+</style>

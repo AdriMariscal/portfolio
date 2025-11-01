@@ -1,10 +1,17 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 ---
-<BaseLayout title="¡Gracias!">
-  <section class="stack" style="margin-top:2rem">
-    <h1>¡Gracias!</h1>
-    <p class="muted">He recibido tu mensaje. Te responderé lo antes posible.</p>
-    <p><a href="/">Volver al inicio</a></p>
+
+<BaseLayout title="¡Gracias! · Adrián Mariscal" description="Mensaje enviado correctamente.">
+  <section class="section">
+    <div class="wrap">
+      <div class="card thanks__card">
+        <div class="card__body thanks__body">
+          <h1 class="thanks__title">¡Gracias!</h1>
+          <p class="muted thanks__desc">He recibido tu mensaje. Te responderé lo antes posible.</p>
+          <a class="btn btn--secondary" href="/">Volver al inicio</a>
+        </div>
+      </div>
+    </div>
   </section>
 </BaseLayout>

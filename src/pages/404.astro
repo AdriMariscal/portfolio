@@ -1,10 +1,42 @@
 ---
+// src/pages/404.astro
 import BaseLayout from "../layouts/BaseLayout.astro";
 ---
-<BaseLayout title="Página no encontrada">
-  <section class="stack" style="margin-top:2rem">
-    <h1>404</h1>
-    <p class="muted">La página que buscas no existe.</p>
-    <p><a href="/">Volver al inicio</a></p>
+
+<BaseLayout title="404 · Página no encontrada">
+  <section class="section">
+    <div class="container">
+      <article class="card" style="text-align:center">
+        <div class="card__body">
+
+          <!-- Icono/emoji con fondo suave -->
+          <div
+            style="
+              font-size:48px;
+              width:72px;height:72px;
+              display:inline-flex;align-items:center;justify-content:center;
+              border-radius:50%;
+              background: var(--am-accent-soft);
+              border:1px solid var(--am-accent-border);
+              margin: 0 auto 12px;"
+            aria-hidden="true"
+          >🧭</div>
+
+          <h1 style="font-size:clamp(2rem,6vw,4rem); margin:0">404</h1>
+
+          <p class="muted" style="margin:.5rem 0 1rem">
+            Vaya… parece que esta página se ha ido a dar un paseo (o a por un café ☕).
+            Mientras vuelve, puedes regresar al inicio.
+          </p>
+
+          <div class="stack" style="margin-top:.5rem">
+            <a class="btn btn--primary" href="/">Volver al inicio</a>
+            <p><small>
+              ¿Buscabas <a class="link" href="/projects">Proyectos</a> o <a class="link" href="/blog">Blog</a>?
+            </small></p>
+          </div>
+        </div>
+      </article>
+    </div>
   </section>
 </BaseLayout>

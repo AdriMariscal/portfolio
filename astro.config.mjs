@@ -1,13 +1,13 @@
 // astro.config.mjs
 import { defineConfig } from 'astro/config';
-import tailwindcss from '@tailwindcss/vite'; // 👈 plugin v4
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
+import tailwind from '@tailwindcss/vite';
 
 export default defineConfig({
   site: 'https://adrianmariscal.netlify.app',
-  integrations: [mdx(), sitemap()], // 👈 sin @astrojs/tailwind
+  integrations: [mdx(), sitemap()],
   vite: {
-    plugins: [tailwindcss()],        // 👈 aquí va Tailwind v4
+    plugins: [tailwind()],
   },
 });
