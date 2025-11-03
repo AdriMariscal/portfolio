@@ -1,7 +1,8 @@
 ---
+// src/pages/blog/index.astro
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import PostCard from "../../components/PostCard.astro";
-import { getCollection } from "astro:content";
+import { getCollection } from "astro:content"; // 👈 IMPORT NECESARIA
 
 // 9 últimos posts, más nuevos primero (ignora borradores si usas `draft: true`)
 const posts = (await getCollection("blog"))
