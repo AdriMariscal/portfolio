@@ -22,7 +22,7 @@ const tags = [...counts.entries()].sort((a, b) => a[0].localeCompare(b[0]));
       <ul class="tags" style="margin-top:6px">
         {tags.map(([label, n]) => (
           <li>
-            <a class="tag" href={`/tags/${slugify(label)}/`}>#{label} ({n})</a>
+            <a class="tag" href={`/blog/tags/${slugify(label)}/`}>#{label} ({n})</a>
           </li>
         ))}
       </ul>
