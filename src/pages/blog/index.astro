@@ -1,18 +1,14 @@
 ---
-// src/pages/blog/index.astro
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import PostCard from "../../components/PostCard.astro";
-import { getCollection } from "astro:content"; // 👈 IMPORT NECESARIA
+import { getCollection } from "astro:content";
 
-// 9 últimos posts, más nuevos primero (ignora borradores si usas `draft: true`)
+// Todos los posts (sin borradores), ordenados por fecha DESC (más reciente primero)
 const posts = (await getCollection("blog"))
   .filter((p) => !p.data.draft)
-  .sort((a, b) => {
-    const ad = new Date(a.data.date ?? 0).getTime();
-    const bd = new Date(b.data.date ?? 0).getTime();
-    return bd - ad;
-  })
-  .slice(0, 9);
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+
+// Si usas paginación, aquí podrías recortar con .slice(0, 9)
 ---
 
 <BaseLayout title="Blog">
@@ -20,7 +16,7 @@ const posts = (await getCollection("blog"))
     <div class="wrap">
       <h1 class="h2" style="font-size:2rem;margin-bottom:18px">Blog</h1>
 
-      <!-- cuadrícula 3x3 igual que en “Últimos artículos” -->
+      <!-- misma rejilla que en “Últimos artículos” -->
       <div class="grid grid--3" style="--stack-gap:16px">
         {posts.map((entry) => <PostCard entry={entry} />)}
         </div>

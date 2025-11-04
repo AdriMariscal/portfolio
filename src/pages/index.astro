@@ -1,65 +1,54 @@
 ---
-// src/pages/index.astro
-import BaseLayout from '../layouts/BaseLayout.astro';
-import Hero from '../components/Hero.astro';
-import ProjectCard from '../components/ProjectCard.astro';
-import PostCard from '../components/PostCard.astro';
+// layouts & componentes
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Hero from "../components/Hero.astro";
+import ProjectCard from "../components/ProjectCard.astro";
+import PostCard from "../components/PostCard.astro";
 
-// 👇 añade countProjects a la importación
-import { getFeaturedProjects, getRecentPosts, countProjects } from "../lib/content";
+// contenido
+import { getCollection } from "astro:content";
+import { getFeaturedProjects, countProjects } from "../lib/content";
 
-const [featured, projectsCount, recentPosts] = await Promise.all([
-  getFeaturedProjects(),
-  countProjects(),          // 👈 ahora sí existe
-  getRecentPosts(3),        // cambia 3 si quieres mostrar otro nº de posts
-]);
+// Proyectos destacados
+const featuredProjects = await getFeaturedProjects();
+
+// Helper seguro para extraer la fecha como número (ms)
+// - Soporta Date o string ISO
+// - Si no hay fecha, devuelve 0 para mandar el post al final
+function ts(entry: any): number {
+  const d = entry?.data?.date;
+  if (!d) return 0;
+  return d instanceof Date ? d.getTime() : new Date(d).getTime() || 0;
+}
+
+// 3 últimos posts por fecha DESC (ignorando drafts y posts sin fecha)
+const latestPosts = (await getCollection("blog"))
+  .filter((p) => !p.data?.draft && p.data?.date)
+  .sort((a, b) => ts(b) - ts(a))
+  .slice(0, 3);
+
+// Métrica de proyectos
+const totalProjects = await countProjects();
 ---
 
-<BaseLayout title="Adrián Mariscal · Portfolio">
-  <!-- Hero -->
-  <section class="hero section">
-    <div class="wrap">
-      <Hero projectsCount={projectsCount} />
-    </div>
-  </section>
+<BaseLayout title="Inicio">
+  <Hero totalProjects={totalProjects} />
 
-<BaseLayout title="Adrián Mariscal · Portfolio">
-  <!-- Hero -->
-  <section class="stack" style="margin-top:2rem">
-    <h1>Hola, soy Adrián 👋</h1>
-    <p class="muted">
-      Desarrollador web. Construyo productos con Astro y creo contenido para ayudar a otros.
-    </p>
-    <p>
-      <a href="/projects">Ver proyectos</a> · <a href="/blog">Leer el blog</a> ·
-      <a href="mailto:amariscalcantudo@gmail.com">Contacto</a>
-    </p>
-  </section>
-
-  <!-- Proyectos destacados -->
   <section class="section">
     <div class="wrap">
-      <h2 class="h2">Proyectos destacados</h2>
-      <div class="stack" style="--stack-gap: 16px">
-        {featured.map((entry) => <ProjectCard entry={entry} />)}
+      <h2 class="h2 section__title">Proyectos destacados</h2>
+      <div class="grid grid--3" style="--stack-gap:16px">
+        {featuredProjects.map((entry) => <ProjectCard entry={entry} />)}
       </div>
     </div>
   </section>
 
-  <!-- Últimos artículos -->
   <section class="section">
     <div class="wrap">
-      <h2 class="h2">Últimos artículos</h2>
-      <div class="grid grid--3">
-        {recentPosts.map((entry) => <PostCard entry={entry} />)}
-      </div>
-      <div class="posts-cta">
-        <a class="btn btn--secondary" href="/blog">Ver todos los artículos</a>
+      <h2 class="h2 section__title">Últimos artículos</h2>
+      <div class="grid grid--3" style="--stack-gap:16px">
+        {latestPosts.map((entry) => <PostCard entry={entry} />)}
       </div>
     </div>
   </section>
-
-  <style>
-    .posts-cta { margin-top: 18px; }
-  </style>
 </BaseLayout>

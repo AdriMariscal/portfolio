@@ -1,63 +1,43 @@
 ---
-// src/pages/tags/[tag].astro
-import BaseLayout from '../../../layouts/BaseLayout.astro';
-import PostCard from '../../../components/PostCard.astro';
-import { getCollection } from 'astro:content';
+import BaseLayout from '@layouts/BaseLayout.astro';
+import PostCard from '@components/PostCard.astro';
+import { getCollection, type CollectionEntry } from 'astro:content';
+import { toSlug } from '@lib/content';
 
-// Genera una página estática por cada etiqueta encontrada en los posts
 export async function getStaticPaths() {
-  const posts = await getCollection('blog', ({ data }) => data.published !== false);
-  const slugs = new Set<string>();
+  const posts = await getCollection('blog');
+  const tags = [...new Set(posts.flatMap((p) => p.data.tags ?? []))];
 
-  for (const p of posts) {
-    const t = Array.isArray(p.data.tags) ? p.data.tags : [];
-    for (const tag of t) {
-      // Usa la misma "regla de slug" que PostCard: encodeURIComponent + toLowerCase
-      slugs.add(encodeURIComponent(String(tag).toLowerCase()));
-    }
-  }
-
-  return [...slugs].map((s) => ({ params: { tag: s } }));
+  return tags.map((tag) => ({
+    params: { tag: toSlug(tag) },
+    props: { tag, tagSlug: toSlug(tag) },
+  }));
 }
 
-// Parámetro de ruta (slug ya en minúsculas/URI-safe)
-const { tag } = Astro.params;
-const target = String(tag ?? '').toLowerCase();
+const { tag, tagSlug } = Astro.props as { tag: string; tagSlug: string };
 
-// Carga y filtra posts por etiqueta (case-insensitive) usando la misma regla de slug
-const all = await getCollection('blog', ({ data }) => data.published !== false);
-const entries = all
-  .filter((entry) => {
-    const tags = Array.isArray(entry.data.tags) ? entry.data.tags : [];
-    return tags.some(
-      (t) => encodeURIComponent(String(t).toLowerCase()) === target
-    );
-  })
-  .sort((a, b) => {
-    const da = new Date(a.data.date ?? 0).getTime();
-    const db = new Date(b.data.date ?? 0).getTime();
-    return db - da; // más nuevos primero
-  });
-
-// 9 últimos (mismo patrón visual que el índice del blog)
-const latest = entries.slice(0, 9);
-const label = decodeURIComponent(target);
+const allPosts = await getCollection('blog');
+const filtered = allPosts
+  .filter((p) => (p.data.tags ?? []).some((t) => toSlug(t) === tagSlug))
+  .sort(
+    (a: CollectionEntry<'blog'>, b: CollectionEntry<'blog'>) =>
+      new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
+  );
 ---
 
-<BaseLayout title={`#${label} · Blog`}>
-  <main class="section">
-    <div class="wrap">
-      <h1 class="h2" style="font-size:2rem;margin-bottom:18px">#{label}</h1>
+<BaseLayout title={`#${tag} — Blog`} description={`Artículos etiquetados como ${tag}`}>
+  <section class="container">
+    <h1 class="section__title">#{tag}</h1>
+    <p class="section__lead">Artículos con la etiqueta <strong>#{tag}</strong>.</p>
 
-      {latest.length === 0 ? (
-        <p>No hay artículos con esta etiqueta todavía.</p>
+    {filtered.length === 0 ? (
+      <p>No hay artículos para esta etiqueta todavía.</p>
       ) : (
-        <div class="posts-grid">
-          {latest.map((entry) => (
-            <PostCard entry={entry} maxTags={4} />
-          ))}
+      <div class="grid grid--posts">
+        {filtered.map((post) => (
+          <PostCard entry={post} />
+        ))}
       </div>
       )}
-    </div>
-  </main>
+  </section>
 </BaseLayout>

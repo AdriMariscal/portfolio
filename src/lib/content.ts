@@ -23,3 +23,12 @@ export async function getRecentPosts(limit = 3) {
   );
   return published.slice(0, limit);
 }
+
+export const toSlug = (s: string) =>
+  s
+    .normalize('NFD')
+    .replace(/\p{Diacritic}/gu, '')
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '');
