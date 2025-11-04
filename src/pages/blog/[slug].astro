@@ -1,70 +1,78 @@
 ---
 // src/pages/blog/[slug].astro
-import BaseLayout from "../../layouts/BaseLayout.astro";
-import { getCollection, getEntryBySlug } from "astro:content";
+import BaseLayout from "@layouts/BaseLayout.astro";
+import { getCollection, type CollectionEntry } from "astro:content";
 
-/** Genera las rutas estáticas SOLO para posts */
+// Rutas estáticas para cada post
 export async function getStaticPaths() {
-  const posts = await getCollection("blog", ({ data }) => data.published !== false);
-  return posts.map((p) => ({ params: { slug: p.slug } }));
+  const entries = await getCollection("blog");
+  return entries.map((p) => ({ params: { slug: p.slug } }));
 }
 
+// Cargar el post actual
 const { slug } = Astro.params;
-if (!slug) throw new Error("Missing slug");
+const entry = (await getCollection("blog")).find((p) => p.slug === slug);
+if (!entry) throw new Error(`Post not found: ${slug}`);
 
-const post = await getEntryBySlug("blog", slug);
-if (!post) throw new Error(`Post not found: ${slug}`);
+const { Content } = await entry.render();
 
-const { Content } = await post.render();
-const { title, description, tags = [], date } = post.data;
-
-/** Slug para enlaces de etiqueta (coincide con /tags/[tag].astro) */
-function tagSlug(s) {
-  return s
-    .toLowerCase()
-    .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // quita acentos
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "");
-}
-
-const d = date ? new Date(date) : null;
-const when = d ? d.toLocaleDateString("es-ES") : "";
-const iso = d ? d.toISOString().split("T")[0] : "";
+// Utilidades mínimas para formato de fecha
+const fmt = (d: Date) =>
+  new Intl.DateTimeFormat("es-ES", { day: "2-digit", month: "2-digit", year: "numeric" }).format(d);
 ---
 
-<BaseLayout title={`${title} · Blog · Adrián Mariscal`} description={description} current="blog">
-  <section class="section post">
+<BaseLayout title={entry.data.title}>
+  <main class="section">
     <div class="wrap">
-      <article class="card post__card">
-        <div class="card__body post__body">
-          <header class="post__header">
-            <h1 class="card__title post__title">{title}</h1>
+      <h1 class="h2" style="font-size:2rem;margin-bottom:12px">{entry.data.title}</h1>
+      <p style="margin:0 0 12px 0;opacity:.75">{fmt(entry.data.date)}</p>
 
-            {description && (
-              <p class="muted post__desc">{description}</p>
-            )}
-
-            {(d || tags.length) && (
-              <div class="post__meta">
-                {d && (
-                  <time datetime={iso} class="post__date">{when}</time>
-          )}
-          {tags.length ? (
-                  <ul class="tags tags--sm post__tags">
-              {tags.map((t) => (
-                <li><a class="tag" href={`/blog/tags/${tagSlug(t)}/`}>#{t}</a></li>
-              ))}
-            </ul>
-          ) : null}
+      <!-- Botón Volver: fallback seguro a /blog; el script lo mejora con referrer -->
+      <div style="margin: 8px 0 16px 0">
+        <a id="back-link" class="btn btn-secondary" href="/blog">← Volver</a>
               </div>
-            )}
-          </header>
 
-          <div class="prose post__prose">
+      <article class="prose">
             <Content />
-          </div>
-        </div>
       </article>
     </div>
-  </section>
+  </main>
+
+  <!-- Mejora progresiva del botón "Volver" en cliente -->
+  <script>
+    (() => {
+      const back = document.getElementById('back-link');
+      if (!back) return;
+
+      const ref = document.referrer;
+      let canUseHistory = false;
+
+      try {
+        const url = ref ? new URL(ref, location.href) : null;
+        const sameOrigin = !!url && url.origin === location.origin;
+
+        // Permitimos volver a Home, Blog o una página de etiquetas
+        const allowed =
+          sameOrigin &&
+          (url.pathname === '/' ||
+           url.pathname === '/blog' ||
+           url.pathname === '/blog/' ||
+           url.pathname.startsWith('/blog/tags/'));
+
+        if (allowed) {
+          back.setAttribute('href', url.href);
+          canUseHistory = true;
+        }
+      } catch {
+        /* ignore */
+      }
+
+      back.addEventListener('click', (e) => {
+        if (canUseHistory && window.history.length > 1) {
+          e.preventDefault();
+          window.history.back();
+        }
+      });
+    })();
+  </script>
 </BaseLayout>

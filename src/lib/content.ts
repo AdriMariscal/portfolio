@@ -32,3 +32,35 @@ export const toSlug = (s: string) =>
     .trim()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/(^-|-$)/g, '');
+
+// Helpers puros y reutilizables
+
+export const slugifyTag = (tag: string) =>
+  tag.toLowerCase().trim().replace(/\s+/g, '-');
+
+// Dado un referer y el origin del sitio, devuelve una URL interna segura para "Volver"
+export function computeBackHref(referer: string, siteOrigin = ''): string {
+  const isInternal =
+    referer.startsWith('/') ||
+    (siteOrigin && referer.startsWith(siteOrigin)) ||
+    referer.includes('/blog/') ||
+    referer.includes('/tags/');
+
+  function normalizeInternalRef(ref: string): string {
+    try {
+      if (ref.startsWith('/')) return ref;
+      const u = new URL(ref);
+      if (siteOrigin && u.origin === siteOrigin) {
+        return `${u.pathname}${u.search}${u.hash}`;
+      }
+      if (u.pathname?.startsWith('/blog') || u.pathname?.startsWith('/tags')) {
+        return `${u.pathname}${u.search}${u.hash}`;
+      }
+    } catch {
+      // si no es URL válida, caemos a /blog
+    }
+    return '/blog';
+  }
+
+  return isInternal ? normalizeInternalRef(referer) : '/blog';
+}
