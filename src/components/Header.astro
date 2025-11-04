@@ -1,4 +1,8 @@
 ---
+/**
+ * Marca de navegación activa basada en la ruta actual, independiente del dominio.
+ * Conserva tu selector CSS [aria-current="true"].
+ */
 const normalize = (p: string) => {
   // Elimina barras finales repetidas; conserva la raíz "/"
   const s = p.replace(/\/+$/, "");
@@ -9,9 +13,8 @@ const current = normalize(Astro.url.pathname);
 
 const isActive = (href: string) => {
   const target = normalize(href);
-  const active =
-    current === target || current.startsWith(`${target}/`);
-  // Mantenemos 'true' para no tocar tu CSS; si no está activo, omitimos el atributo
+  const active = current === target || current.startsWith(`${target}/`);
+  // Si prefieres WAI-ARIA estricto: return active ? "page" : undefined;
   return active ? "true" : undefined;
 };
 ---
