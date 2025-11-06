@@ -4,9 +4,19 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import PostCard from '@/components/PostCard.astro';
 import { getCollection } from 'astro:content';
 
+// Coacción segura de fecha
+const toTime = (d: unknown): number => {
+  if (d instanceof Date) return d.getTime();
+  if (typeof d === 'string' && d) {
+    const t = new Date(d).getTime();
+    return Number.isNaN(t) ? 0 : t;
+  }
+  return 0;
+};
+
 // Posts más recientes primero
 const posts = (await getCollection('blog')).sort(
-  (a, b) => b.data.date.getTime() - a.data.date.getTime()
+  (a, b) => toTime(b.data?.date) - toTime(a.data?.date)
 );
 
 // Muestra hasta 9 (ajusta si quieres)
@@ -27,7 +37,7 @@ const totalPages = Math.max(1, Math.ceil(posts.length / VISIBLE));
 
     {totalPages > 1 && (
       <nav class="pagination" aria-label="Paginación del blog">
-        <a href="/blog/page/2">Siguiente →</a>
+        <a href="/blog/pages/2">Siguiente →</a>
       </nav>
     )}
   </section>

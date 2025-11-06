@@ -7,7 +7,7 @@ import { toSlug } from '@lib/content';
 
 const PER_PAGE = 9;
 
-// Genera /blog/tags/{tag}/page/1..N
+// Genera /blog/tags/{tag}/pages/1..N
 export async function getStaticPaths() {
   const all = await getCollection('blog');
 
@@ -36,9 +36,20 @@ export async function getStaticPaths() {
 const { tag, totalPages } = Astro.props as { tag: string, totalPages: number };
 
 const all = await getCollection('blog');
+
+// Coacción segura de fecha
+const toTime = (d: unknown): number => {
+  if (d instanceof Date) return d.getTime();
+  if (typeof d === 'string' && d) {
+    const t = new Date(d).getTime();
+    return Number.isNaN(t) ? 0 : t;
+  }
+  return 0;
+};
+
 const tagged = all
   .filter((p) => (p.data.tags ?? []).map(toSlug).includes(tag))
-  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+  .sort((a, b) => toTime(b.data?.date) - toTime(a.data?.date));
 
 const current = Math.max(1, Math.min(Number(Astro.params.page ?? 1), totalPages));
 const start = (current - 1) * 9;
@@ -60,13 +71,13 @@ const title = `#${tag}`;
 
     <nav class="pagination" aria-label={`Paginación de ${title}`}>
       {current > 1 ? (
-        <a href={current === 2 ? `/blog/tags/${tag}` : `/blog/tags/${tag}/page/${current - 1}`}>← Anterior</a>
+        <a href={current === 2 ? `/blog/tags/${tag}` : `/blog/tags/${tag}/pages/${current - 1}`}>← Anterior</a>
       ) : (
         <span>← Anterior</span>
       )}
       <span class="is-active">{current}</span>
       {current < totalPages ? (
-        <a href={`/blog/tags/${tag}/page/${current + 1}`}>Siguiente →</a>
+        <a href={`/blog/tags/${tag}/pages/${current + 1}`}>Siguiente →</a>
       ) : (
         <span>Siguiente →</span>
       )}

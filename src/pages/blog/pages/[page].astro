@@ -6,7 +6,7 @@ import { getCollection } from 'astro:content';
 
 const PER_PAGE = 9;
 
-// Genera /blog/page/1, /blog/page/2, …
+// Genera /blog/pages/1, /blog/pages/2, …
 export async function getStaticPaths() {
   const all = await getCollection('blog');
 
@@ -55,13 +55,13 @@ const pagePosts = posts.slice(start, start + PER_PAGE);
 
     <nav class="pagination" aria-label="Paginación del blog">
       {current > 1 ? (
-        <a href={current === 2 ? '/blog' : `/blog/page/${current - 1}`} aria-label="Anterior">← Anterior</a>
+        <a href={current === 2 ? '/blog' : `/blog/pages/${current - 1}`} aria-label="Anterior">← Anterior</a>
       ) : (
         <span>← Anterior</span>
       )}
       <span class="is-active">{current}</span>
       {current < totalPages ? (
-        <a href={`/blog/page/${current + 1}`} aria-label="Siguiente">Siguiente →</a>
+        <a href={`/blog/pages/${current + 1}`} aria-label="Siguiente">Siguiente →</a>
       ) : (
         <span>Siguiente →</span>
       )}
