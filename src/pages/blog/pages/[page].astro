@@ -4,7 +4,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import PostCard from '@/components/PostCard.astro'; 
 import { getCollection } from 'astro:content';
 
-const PER_PAGE = 9;
+const PER_PAGE = 9; // 👈 necesario antes de usarlo en getStaticPaths
 
 // Genera /blog/pages/1, /blog/pages/2, …
 export async function getStaticPaths() {
@@ -27,12 +27,11 @@ export async function getStaticPaths() {
 
   return Array.from({ length: totalPages }, (_, i) => ({
     params: { page: String(i + 1) },
-    props: { totalPages, posts }
+    props: { totalPages, posts },
   }));
 }
 
-const { page, posts, totalPages } = Astro.props as {
-  page?: string;
+const { posts, totalPages } = Astro.props as {
   posts: Awaited<ReturnType<typeof getCollection>>;
   totalPages: number;
 };
