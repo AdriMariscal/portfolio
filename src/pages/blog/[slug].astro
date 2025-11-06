@@ -35,8 +35,8 @@ const toISO = (d: unknown) => {
   const t = dt.getTime();
   return Number.isFinite(t) ? dt.toISOString() : undefined;
 };
-const datePublishedISO = toISO(post.data.date ?? post.data.pubDate ?? null);
-const dateModifiedISO = toISO(post.data.updatedDate ?? post.data.date ?? null);
+const datePublishedISO = toISO(post.data.date ?? null);
+const dateModifiedISO = toISO(post.data.updated ?? post.data.date ?? null);
 
 // Etiquetas (solo se mostrarán al final)
 const tags = Array.isArray(post.data.tags) ? post.data.tags : [];
