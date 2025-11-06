@@ -1,10 +1,10 @@
 ---
+// src/components/Footer.astro
 import pkg from '../../package.json' assert { type: 'json' };
 
 const year = new Date().getFullYear();
 const version = pkg.version;
 
-// Enlaces legales (ajusta rutas cuando tengas el contenido final)
 const legalLinks = [
   { href: '/legal/aviso-legal', label: 'Aviso legal' },
   { href: '/legal/privacidad', label: 'Privacidad' },

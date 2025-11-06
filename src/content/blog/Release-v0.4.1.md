@@ -1,8 +1,8 @@
 ---
-title: "v0.4.1 — Rediseño visual, blog con etiquetas y sección legal completa"
+title: "Release v0.4.1 — Rediseño visual, blog con etiquetas y sección legal completa"
 description: "Nueva versión mayor del portfolio: identidad visual consolidada, tarjetas de proyectos y posts mejoradas, páginas legales conforme a LSSI y RGPD, y flujo de despliegue con staging protegido."
 date: 2025-11-01
-tags: ["release-notes", "astro", "netlify", "seo", "lighthouse", "legal", "lssi", "rgpd", "ux"]
+tags: ["release-notes", "portfolio", "astro", "netlify", "seo", "lighthouse", "legal", "lssi", "rgpd", "ux"]
 draft: false
 ---
 

@@ -1,0 +1,58 @@
+---
+// src/pages/blog/pages/[page].astro
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PostCard from '@/components/PostCard.astro';
+import { getCollection } from 'astro:content';
+
+const PER_PAGE = 9;
+
+// Genera /blog/page/1, /blog/page/2, …
+export async function getStaticPaths() {
+  const all = await getCollection('blog');
+  // Orden descendente por fecha
+  const posts = all.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+  const totalPages = Math.max(1, Math.ceil(posts.length / PER_PAGE));
+
+  return Array.from({ length: totalPages }, (_, i) => ({
+    params: { page: String(i + 1) },
+    props: { totalPages, posts }
+  }));
+}
+
+const { page, posts, totalPages } = Astro.props as {
+  page?: string;
+  posts: Awaited<ReturnType<typeof getCollection>>;
+  totalPages: number;
+};
+
+const current = Math.max(1, Math.min(Number(Astro.params.page ?? 1), totalPages));
+const start = (current - 1) * PER_PAGE;
+const pagePosts = posts.slice(start, start + PER_PAGE);
+---
+
+<BaseLayout title={`Blog — página ${current}`} description="Artículos del blog paginados.">
+  <section class="container section">
+    <header class="section__header">
+      <h1 class="h1">Blog</h1>
+      <p class="lead">Página {current} de {totalPages}</p>
+    </header>
+
+    <div class="posts-grid">
+      {pagePosts.map((entry) => (<PostCard entry={entry} />))}
+    </div>
+
+    <nav class="pagination" aria-label="Paginación del blog">
+      {current > 1 ? (
+        <a href={current === 2 ? '/blog' : `/blog/page/${current - 1}`} aria-label="Anterior">← Anterior</a>
+      ) : (
+        <span>← Anterior</span>
+      )}
+      <span class="is-active">{current}</span>
+      {current < totalPages ? (
+        <a href={`/blog/page/${current + 1}`} aria-label="Siguiente">Siguiente →</a>
+      ) : (
+        <span>Siguiente →</span>
+      )}
+    </nav>
+  </section>
+</BaseLayout>

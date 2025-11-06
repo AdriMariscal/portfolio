@@ -1,120 +1,142 @@
 ---
 // src/pages/projects/[slug].astro
-import BaseLayout from "../../layouts/BaseLayout.astro";
-import { getCollection, getEntryBySlug } from "astro:content";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { getCollection, getEntry } from "astro:content";
 
 export async function getStaticPaths() {
-  const projects = await getCollection("projects", ({ data }) => data.published !== false);
-  return projects.map((p) => ({ params: { slug: p.slug } }));
+  const entries = await getCollection("projects", ({ data }) => data.published !== false);
+  return entries.map(({ slug }) => ({ params: { slug } }));
 }
 
 const { slug } = Astro.params;
-if (!slug) throw new Error("Missing slug");
+const project = await getEntry("projects", slug);
+if (!project) throw new Error(`Proyecto no encontrado: ${slug}`);
 
-const entry = await getEntryBySlug("projects", slug);
-if (!entry) throw new Error(`Proyecto no encontrado: ${slug}`);
+const { Content } = await project.render();
+const data: any = project.data;
 
-const { Content } = await entry.render();
-const data = entry.data;
+// utils
+const fmtDate = (d: Date | string | undefined) => {
+  if (!d) return undefined;
+  try {
+    const dd = typeof d === "string" ? new Date(d) : d;
+    return dd.toLocaleDateString("es-ES", { day: "2-digit", month: "long", year: "numeric" });
+  } catch { return String(d); }
+};
 
-const latest = data.changelog?.[0];
-const latestVersion = latest?.version ?? null;
-const lastUpdate = latest?.date ?? data.date;
+// normaliza urls: null/"" => undefined
+const normalizeUrl = (v: unknown) =>
+  typeof v === "string" && v.trim() !== "" ? v : undefined;
 
-function fmt(d: Date | string) {
-  try { return new Date(d).toLocaleDateString("es-ES"); } catch { return String(d); }
-}
+// campos
+const title: string = data.title;
+const tags: string[] = Array.isArray(data.tags) ? data.tags : [];
 
-// Asegura que cualquier URL sin protocolo sea absoluta (https://)
-function ensureAbs(url?: string) {
-  if (!url) return undefined;
-  return /^https?:\/\//i.test(url) ? url : `https://${url}`;
-}
+const projectUrl = normalizeUrl(data.projectUrl);
+const repoUrl = normalizeUrl(data.repoUrl);
+const demoUrl = normalizeUrl(data.demoUrl);
+
+// estado
+const isActive: boolean =
+  typeof data.active === "boolean"
+    ? data.active
+    : typeof data.status === "string"
+      ? ["active", "activo", "activa"].includes(String(data.status).toLowerCase())
+      : data.published !== false;
+
+// changelog
+type Change = { type?: string; text?: string };
+type Release = { version?: string; date?: string; changes?: Change[] };
+const changelog: Release[] = Array.isArray(data.changelog) ? data.changelog : [];
+const latest = changelog.length ? changelog[0] : undefined;
+const latestDate = latest?.date ? fmtDate(latest.date) : undefined;
 ---
 
-<BaseLayout title={`${data.title} · Proyecto`} description={data.description}>
-  <section class="section">
-    <div class="wrap">
-      <article class="card">
-        <div class="card__body">
-          <h1 class="card__title" style="margin-bottom:.5rem">{data.title}</h1>
+<BaseLayout title={title} description={undefined}>
+  <article class="section post">
+    <!-- margen inferior ajustado a 24px -->
+    <div class="wrap post__card card card--soft" style="margin:8px auto 24px">
+      <div class="post__body">
+          <h1 class="post__title">{title}</h1>
 
-          <p style="margin:.25rem 0 1rem; color:var(--am-graphite,#162433); font-size:.95rem">
-            <strong>Estado:</strong> {data.status}
-            {latestVersion ? ` · ` : ""}
-            {latestVersion ? <><strong>Última versión:</strong> {latestVersion} <small>({fmt(lastUpdate)})</small></> : null}
-          </p>
+            <p class="post__date">
+          <strong>Estado:</strong> {isActive ? "Activo" : "Inactivo"}
+          {latest?.version && (
+              <>
+              {" · "}<strong>Última versión:</strong> {latest.version}
+                {latestDate && ` (${latestDate})`}
+              </>
+            )}
+            </p>
 
-          {(data.projectUrl || data.repoUrl || data.demoUrl) && (
-            <div class="project__links">
-              {data.projectUrl && (
-                <a
-                  class="btn btn--secondary btn--sm"
-                  href={ensureAbs(data.projectUrl)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  title="Abrir proyecto en una nueva pestaña"
-                  aria-label="Abrir proyecto en una nueva pestaña"
-                >Ver proyecto ↗</a>
-              )}
-
-              {data.repoUrl && (
-                <a
-                  class="btn btn--secondary btn--sm"
-                  href={ensureAbs(data.repoUrl)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  title="Abrir repositorio en una nueva pestaña"
-                  aria-label="Abrir repositorio en una nueva pestaña"
-                >Código ↗</a>
-              )}
-
-              {data.demoUrl && (
-                <a
-                  class="btn btn--secondary btn--sm"
-                  href={ensureAbs(data.demoUrl)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  title="Abrir demo en una nueva pestaña"
-                  aria-label="Abrir demo en una nueva pestaña"
-                >Demo ↗</a>
-              )}
-            </div>
+          {(projectUrl || repoUrl || demoUrl) && (
+          <div class="post__actions" style="display:flex; gap:.5rem; flex-wrap:wrap; margin:.5rem 0 0">
+          {projectUrl && (
+              <a class="btn btn--secondary btn--sm" href={projectUrl} target="_blank" rel="noopener noreferrer">
+                Ver proyecto →
+            </a>
+            )}
+            {repoUrl && (
+              <a class="btn btn--secondary btn--sm" href={repoUrl} target="_blank" rel="noopener noreferrer">
+                Ver código
+              </a>
+            )}
+            {demoUrl && (
+              <a class="btn btn--secondary btn--sm" href={demoUrl} target="_blank" rel="noopener noreferrer">
+                Ver demo
+              </a>
+          )}
+          </div>
           )}
 
-          {data.tags?.length ? (
-            <p style="margin:.25rem 0 1rem"><strong>Tecnologías:</strong> {data.tags.join(", ")}</p>
-          ) : null}
-
-          <hr style="border:none; border-top:1px solid var(--am-border); margin:12px 0" />
-
-          <div class="prose">
-            <Content />
-          </div>
+        <div class="post__prose">
+          <Content />
         </div>
-      </article>
 
-      {data.changelog?.length ? (
-        <section class="section section--tight">
-          <h2 class="h2">Changelog</h2>
-          <ul class="stack">
-            {data.changelog.map((rel) => (
-              <li class="card">
-                <div class="card__body">
-                  <div class="card__title">
-                    {rel.version} <span style="font-size:.9rem; color:#6b7280">({fmt(rel.date)})</span>
-                  </div>
-                  <ul class="prose-list">
-                    {rel.changes.map((c) => (
-                      <li><code>{c.type}</code> {c.text}</li>
-                    ))}
-                  </ul>
-                </div>
-              </li>
-            ))}
+        {tags?.length ? (
+          <footer class="post__meta">
+            <ul class="tags tags--sm tags--mt" aria-label="Tecnologías del proyecto">
+              {tags.map((t) => (
+                <li>
+                  <a class="tag" href={`/blog/tags/${encodeURIComponent(t)}/`}>#{t}</a>
+                </li>
+              ))}
           </ul>
-        </section>
-      ) : null}
+          </footer>
+        ) : null}
+      </div>
     </div>
-  </section>
+  </article>
+
+  {/* Changelog con sección compacta y respiración inferior */}
+  {changelog.length ? (
+    <article class="section section--tight post" style="padding-bottom:24px">
+      <div class="wrap" aria-labelledby="changelog-title">
+            <h2 id="changelog-title" class="h3" style="margin:0 0 .75rem">Changelog</h2>
+
+            {changelog.map((rel, i) => {
+            const d = fmtDate(rel?.date);
+              return (
+              <article class="card card--soft" style={i > 0 ? "margin-top: 1rem" : undefined}>
+                  <div class="card__body">
+                    <h3 class="h4" style="margin:0 0 .5rem">
+                    {rel?.version}{d && ` (${d})`}
+              </h3>
+                  {Array.isArray(rel?.changes) && rel!.changes!.length ? (
+                      <ul>
+                      {rel!.changes!.map((c) => (
+                  <li>
+                          {c?.type ? <><strong>{c.type}</strong>{c?.text ? " " : ""}</> : null}
+                            {c?.text}
+                  </li>
+                ))}
+              </ul>
+                  ) : null}
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+    </article>
+  ) : null}
 </BaseLayout>

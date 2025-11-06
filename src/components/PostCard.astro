@@ -1,14 +1,18 @@
 ---
-import type { CollectionEntry } from 'astro:content';
+// src/components/PostCard.astro
+import type { CollectionEntry } from "astro:content";
 
-// Props: entry (post) y tope de etiquetas a mostrar (por defecto 4)
 const { entry, maxTags = 6 } = Astro.props as {
-  entry: CollectionEntry<'blog'>;
+  entry: CollectionEntry<"blog">;
   maxTags?: number;
 };
 
 const { data, slug } = entry;
 const tags: string[] = Array.isArray(data.tags) ? data.tags : [];
+const tagSlice = tags.slice(0, maxTags);
+
+const slugifyTag = (t: string) =>
+  t.toLowerCase().trim().normalize("NFD").replace(/\p{Diacritic}/gu, "").replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 ---
 
 <article class="card card--post">
@@ -21,11 +25,11 @@ const tags: string[] = Array.isArray(data.tags) ? data.tags : [];
       <p class="postcard__excerpt">{data.description}</p>
     )}
 
-  {tags.length > 0 && (
-      <ul class="tags">
-        {tags.slice(0, maxTags).map((t) => (
+    {tagSlice.length > 0 && (
+      <ul class="taglist" aria-label="Etiquetas">
+        {tagSlice.map((t) => (
           <li>
-            <a class="tag" href={`/blog/tags/${encodeURIComponent(t).toLowerCase()}/`}>#{t}</a>
+            <a class="tag" href={`/blog/tags/${slugifyTag(t)}/`}>#{t}</a>
           </li>
       ))}
     </ul>

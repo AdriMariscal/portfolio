@@ -2,12 +2,9 @@
 // src/components/Hero.astro
 import { getCollection } from "astro:content";
 
-// Cuenta proyectos automáticamente
 const projects = await getCollection("projects");
 const projectsCount = projects.length;
 
-// 🔧 Cambia esta constante si tu ruta de etiquetas es distinta
-// p.ej. const SALESFORCE_TAG_PATH = "/blog?tag=salesforce";
 const SALESFORCE_TAG_PATH = "/blog/tags/salesforce";
 ---
 
@@ -22,7 +19,6 @@ const SALESFORCE_TAG_PATH = "/blog/tags/salesforce";
     </div>
 
     <div class="grid grid--3 hero__stats" style="margin-top: 20px">
-      <!-- 10+ años con Salesforce -> enlace a página de etiqueta -->
       <a class="card card--link" href={SALESFORCE_TAG_PATH} aria-label="Entradas del blog con etiqueta Salesforce">
         <div class="card__body">
           <h3 class="card__title">10+</h3>
@@ -30,7 +26,6 @@ const SALESFORCE_TAG_PATH = "/blog/tags/salesforce";
         </div>
       </a>
 
-      <!-- Nº de proyectos -> calculado y con enlace a /projects -->
       <a class="card card--link" href="/projects" aria-label="Ver proyectos">
         <div class="card__body">
           <h3 class="card__title">{projectsCount}</h3>
@@ -38,7 +33,6 @@ const SALESFORCE_TAG_PATH = "/blog/tags/salesforce";
         </div>
       </a>
 
-      <!-- Lighthouse medio -> enlaza al post explicativo -->
       <a class="card card--link" href="/blog/lighthouse" aria-label="Qué es Google Lighthouse">
         <div class="card__body">
           <h3 class="card__title">98/100</h3>

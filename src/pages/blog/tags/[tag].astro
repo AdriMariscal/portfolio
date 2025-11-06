@@ -1,43 +1,65 @@
 ---
-import BaseLayout from '@layouts/BaseLayout.astro';
-import PostCard from '@components/PostCard.astro';
-import { getCollection, type CollectionEntry } from 'astro:content';
+// src/pages/blog/tags/[tag].astro
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PostCard from '@/components/PostCard.astro';
+import { getCollection } from 'astro:content';
 import { toSlug } from '@lib/content';
 
-export async function getStaticPaths() {
-  const posts = await getCollection('blog');
-  const tags = [...new Set(posts.flatMap((p) => p.data.tags ?? []))];
+const PER_PAGE = 9;
 
-  return tags.map((tag) => ({
-    params: { tag: toSlug(tag) },
-    props: { tag, tagSlug: toSlug(tag) },
+// Normaliza fechas
+const toTime = (d: unknown) => {
+  if (!d) return 0;
+  const dt = d instanceof Date ? d : new Date(String(d));
+  const t = dt.getTime();
+  return Number.isFinite(t) ? t : 0;
+};
+
+// Rutas estáticas por etiqueta (solo página 1 aquí)
+export async function getStaticPaths() {
+  const all = await getCollection('blog', ({ data }) => (data.published ?? true) && !data.draft);
+
+  const tagSet = new Set<string>();
+  for (const p of all) for (const t of (p.data.tags ?? [])) tagSet.add(toSlug(t));
+
+  return Array.from(tagSet).map((tag) => ({
+    params: { tag },
   }));
 }
 
-const { tag, tagSlug } = Astro.props as { tag: string; tagSlug: string };
+const { tag } = Astro.params;
 
-const allPosts = await getCollection('blog');
-const filtered = allPosts
-  .filter((p) => (p.data.tags ?? []).some((t) => toSlug(t) === tagSlug))
-  .sort(
-    (a: CollectionEntry<'blog'>, b: CollectionEntry<'blog'>) =>
-      new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
+// Filtra por etiqueta (match por slug), solo publicados, y ordena desc por fecha
+const allPosts = await getCollection('blog', ({ data }) => (data.published ?? true) && !data.draft);
+const posts = allPosts
+  .filter((p) => (p.data.tags ?? []).map(toSlug).includes(tag!))
+  .sort((a, b) =>
+    toTime(b.data.date ?? b.data.pubDate ?? b.data.updatedDate) -
+    toTime(a.data.date ?? a.data.pubDate ?? a.data.updatedDate)
   );
+
+const totalPages = Math.max(1, Math.ceil(posts.length / PER_PAGE));
+const pagePosts = posts.slice(0, PER_PAGE);
+
+const title = `#${tag}`;
+const description = `Artículos con la etiqueta ${title}`;
 ---
 
-<BaseLayout title={`#${tag} — Blog`} description={`Artículos etiquetados como ${tag}`}>
-  <section class="container">
-    <h1 class="section__title">#{tag}</h1>
-    <p class="section__lead">Artículos con la etiqueta <strong>#{tag}</strong>.</p>
+<BaseLayout title={title} description={description}>
+  <section class="container section">
+    <header class="section__header">
+      <h1 class="h1">{title}</h1>
+      <p class="lead">Artículos con la etiqueta <strong>{title}</strong>.</p>
+    </header>
 
-    {filtered.length === 0 ? (
-      <p>No hay artículos para esta etiqueta todavía.</p>
-      ) : (
-      <div class="grid grid--posts">
-        {filtered.map((post) => (
-          <PostCard entry={post} />
-        ))}
+      <div class="posts-grid">
+      {pagePosts.map((entry) => (<PostCard entry={entry} />))}
       </div>
-      )}
+
+    {totalPages > 1 && (
+      <nav class="pagination" aria-label={`Paginación de la etiqueta ${title}`}>
+        <a href={`/blog/tags/${tag}/page/2`}>Siguiente →</a>
+      </nav>
+    )}
   </section>
 </BaseLayout>

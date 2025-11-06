@@ -1,53 +1,66 @@
-import { defineCollection, z } from 'astro:content';
+// src/content.config.ts
+import { defineCollection, z } from "astro:content";
 
-const optionalDate = z.coerce.date().optional();
+/** Schema auxiliar para URLs que pueden venir como string válido, "" o null */
+const urlField = z.union([z.string().url(), z.literal(""), z.null()]).optional();
 
+/** BLOG */
 const blog = defineCollection({
-  type: 'content',
-  schema: ({ image }) =>
-    z.object({
+  type: "content",
+  schema: z
+    .object({
     title: z.string(),
     description: z.string().optional(),
-
-      // Compatibilidad: acepta 'pubDate' y también 'date'
-      pubDate: optionalDate,
-      date: optionalDate,
-
-      updatedDate: optionalDate,
     tags: z.array(z.string()).default([]),
-      draft: z.boolean().default(false),
-      heroImage: image().optional(),
+      date: z.date(),
+      updated: z.date().optional(),
+      published: z.boolean().default(true),
     })
-    // Normalizamos para que siempre haya 'pubDate' si alguna de las dos existe
-    .transform((data) => ({
-      ...data,
-      pubDate: data.pubDate ?? data.date,
-    })),
+    .passthrough(),
 });
 
+/** PROJECTS */
 const projects = defineCollection({
-  type: 'content',
+  type: "content",
   schema: z
     .object({
     title: z.string(),
       description: z.string().optional(),
-    featured: z.boolean().default(false),
-
-      // Acepta URL válidas, cadena vacía o null y normaliza a undefined
-      repoUrl: z.union([z.string().url(), z.literal('')]).nullable().optional(),
-      projectUrl: z.union([z.string().url(), z.literal('')]).nullable().optional(),
-      demoUrl: z.union([z.string().url(), z.literal('')]).nullable().optional(),
-
       tags: z.array(z.string()).default([]),
-      draft: z.boolean().default(false),
-      date: optionalDate,
+
+      // estado / publicación
+      published: z.boolean().default(true),
+      active: z.boolean().optional(),
+      status: z.string().optional(),
+
+      // enlaces (aceptan url válida, "" o null)
+      projectUrl: urlField,
+      repoUrl: urlField,
+      demoUrl: urlField,
+
+      // opcionales genéricos
+      date: z.date().optional(),
+      updated: z.date().optional(),
+
+      // changelog tipado
+      changelog: z
+        .array(
+          z.object({
+            version: z.string(),
+            date: z.union([z.string(), z.date()]).optional(),
+            changes: z
+              .array(
+                z.object({
+                  type: z.string().optional(),
+                  text: z.string(),
+                })
+              )
+              .optional(),
+          })
+        )
+        .default([]),
     })
-    .transform((d) => ({
-      ...d,
-      repoUrl: d.repoUrl || undefined,
-      projectUrl: d.projectUrl || undefined,
-      demoUrl: d.demoUrl || undefined,
-    })),
+    .passthrough(),
 });
 
 export const collections = { blog, projects };

@@ -1,25 +1,34 @@
 ---
-import BaseLayout from "../../layouts/BaseLayout.astro";
-import PostCard from "../../components/PostCard.astro";
-import { getCollection } from "astro:content";
+// src/pages/blog/index.astro
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PostCard from '@/components/PostCard.astro';
+import { getCollection } from 'astro:content';
 
-// Todos los posts (sin borradores), ordenados por fecha DESC (más reciente primero)
-const posts = (await getCollection("blog"))
-  .filter((p) => !p.data.draft)
-  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+// Posts más recientes primero
+const posts = (await getCollection('blog')).sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime()
+);
 
-// Si usas paginación, aquí podrías recortar con .slice(0, 9)
+// Muestra hasta 9 (ajusta si quieres)
+const VISIBLE = 9;
+const totalPages = Math.max(1, Math.ceil(posts.length / VISIBLE));
 ---
 
-<BaseLayout title="Blog">
-  <main class="section">
-    <div class="wrap">
-      <h1 class="h2" style="font-size:2rem;margin-bottom:18px">Blog</h1>
+<BaseLayout title="Blog" description="Artículos sobre Salesforce, Astro, DevOps y más.">
+  <section class="container section">
+    <header class="section__header">
+      <h1 class="h1">Blog</h1>
+      <p class="lead">Últimos artículos, ordenados del más nuevo al más antiguo.</p>
+    </header>
 
-      <!-- misma rejilla que en “Últimos artículos” -->
-      <div class="grid grid--3" style="--stack-gap:16px">
-        {posts.map((entry) => <PostCard entry={entry} />)}
-        </div>
+    <div class="posts-grid">
+      {posts.slice(0, VISIBLE).map((entry) => (<PostCard entry={entry} />))}
     </div>
-  </main>
+
+    {totalPages > 1 && (
+      <nav class="pagination" aria-label="Paginación del blog">
+        <a href="/blog/page/2">Siguiente →</a>
+      </nav>
+    )}
+  </section>
 </BaseLayout>
