@@ -1,132 +1,130 @@
 ---
+// src/components/ProjectCard.astro
 import type { CollectionEntry } from "astro:content";
 
-type WithEntry = { entry: CollectionEntry<"projects">; href?: string };
+type Link = { href: string; label: string };
+
+type WithEntry = {
+  entry: CollectionEntry<"projects">;
+  withLinks?: boolean;
+};
+
 type WithProps = {
-  entry?: undefined;
   title: string;
   description?: string;
+  status?: string;
   tags?: string[];
-  repoUrl?: string;
-  demoUrl?: string;
-  projectUrl?: string; // <— NUEVO
-  href: string;
+  links?: Link[];
+  withLinks?: boolean;
 };
 
 const props = Astro.props as WithEntry | WithProps;
 
-function slugifyTag(t: string) {
-  return encodeURIComponent(
-    t
-      .trim()
-      .normalize("NFD")
-      .replace(/\p{Diacritic}/gu, "")
-      .toLowerCase()
-      .replace(/\s+/g, "-")
-  );
-}
+const title =
+  "entry" in props ? props.entry.data.title : props.title;
 
-// Prefija https:// si falta para que no sea ruta interna
-function toExternal(u: string) {
-  const s = (u ?? "").trim();
-  if (!s) return "";
-  return /^https?:\/\//i.test(s) ? s : `https://${s.replace(/^\/+/, "")}`;
-}
+const description =
+  "entry" in props ? props.entry.data.description : props.description;
 
-let title: string;
-let description = "";
-let tags: string[] = [];
-let repo = "";
-let demo = "";
-let project = ""; // <— NUEVO
-let status = "";
-let slugHref = "#";
+const status =
+  "entry" in props ? props.entry.data.status : props.status;
 
-if ("entry" in props && props.entry) {
-  const { data, slug } = props.entry;
-  title = data.title ?? "Proyecto sin título";
-  description = data.description ?? "";
-  tags = Array.isArray(data.tags) ? data.tags : [];
-  repo = (data as any).repoUrl ?? "";
-  demo = (data as any).demoUrl ?? "";
-  project = (data as any).projectUrl ?? ""; // <— NUEVO
-  status = (data as any).status ?? "";
-  slugHref = props.href ?? `/projects/${slug}`;
-} else {
-  title = props.title;
-  description = props.description ?? "";
-  tags = props.tags ?? [];
-  repo = props.repoUrl ?? "";
-  demo = props.demoUrl ?? "";
-  project = props.projectUrl ?? ""; // <— NUEVO
-  status = "";
-  slugHref = props.href;
-}
+const allTags: string[] =
+  "entry" in props ? (props.entry.data.tags ?? []) : (props.tags ?? []);
+
+const links: Link[] =
+  "entry" in props ? (props.entry.data.links ?? []) : (props.links ?? []);
+
+const withLinks = props.withLinks ?? true;
+
+// HREF de la ficha (solo si viene desde colección)
+const href =
+  "entry" in props ? `/projects/${props.entry.slug}/` : undefined;
+
+// Máximo de etiquetas visibles
+const MAX_TAGS = 6;
+const displayTags = allTags.slice(0, MAX_TAGS);
+
+const toExternal = (url: string) => url.startsWith("http");
+const slugifyTag = (t: string) =>
+  t
+    .toLowerCase()
+    .trim()
+    .normalize("NFD")
+    .replace(/\p{Diacritic}/gu, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
 ---
 
-<article class="project-card card">
+<article class="card project-card">
   <div class="card__body">
-    <header class="project-card__head">
-      <h3 class="card__title"><a href={slugHref}>{title}</a></h3>
-      {status && <span class="badge badge--active">{status}</span>}
-    </header>
+    <h3 class="card__title">
+      {href ? (
+        <a
+          href={href}
+          class="card__title-link"
+          aria-label={`Abrir ficha del proyecto: ${title}`}
+        >
+          {title}
+        </a>
+      ) : (
+        title
+      )}
+    </h3>
 
-    {description && <p class="muted">{description}</p>}
+    {description && <p class="card__excerpt">{description}</p>}
 
-    {(project || repo || demo || tags.length) && (
-      <footer class="card__meta">
-        <ul class="links" aria-label="Enlaces">
-          {repo && (
+    {withLinks && links.length > 0 && (
+      <ul class="links" aria-label="Enlaces del proyecto">
+        {links.map((l) => (
             <li>
-              <a class="link" href={toExternal(repo)} target="_blank" rel="noopener">Código</a>
+            <a
+              class="btn btn--sm btn--secondary"
+              href={l.href}
+              target={toExternal(l.href) ? "_blank" : undefined}
+              rel={toExternal(l.href) ? "noopener noreferrer" : undefined}
+            >
+              {l.label}
+            </a>
             </li>
-          )}
-          {demo && (
-            <li>
-              <a class="link" href={toExternal(demo)} target="_blank" rel="noopener">Demo</a>
-            </li>
-          )}
-          {project && (
-            <li>
-              <a class="link" href={toExternal(project)} target="_blank" rel="noopener">Ver proyecto</a>
-            </li>
-          )}
+        ))}
         </ul>
+    )}
 
-        {tags.length ? (
-          <ul class="tags" aria-label="Etiquetas">
-            {tags.map((t) => (
+    {displayTags.length > 0 && (
+          <ul class="taglist" aria-label="Etiquetas">
+        {displayTags.map((t) => (
               <li>
-                <a class="tag" href={`/blog/tags/${slugifyTag(t)}`}>#{t}</a>
+            <a class="tag" href={`/blog/tags/${slugifyTag(t)}/`}>#{t}</a>
               </li>
             ))}
           </ul>
-        ) : null}
-      </footer>
     )}
   </div>
 </article>
 
 <style>
-/* Más aire dentro de la tarjeta, solo para ProjectCard */
-.project-card .card__body{padding:22px}
+  .links,
+  .taglist {
+    display: flex;
+    gap: 12px;
+    list-style: none;
+    margin: 12px 0 0;
+    padding: 0;
+    flex-wrap: wrap;
+  }
 
-/* Cabecera con separación cómoda */
-.project-card__head{
-  display:flex;gap:12px;align-items:center;justify-content:space-between;
-  margin-bottom:10px
-}
-
-/* Bloque meta: enlaces a la izquierda, chips a la derecha; envuelven en móvil */
-.card__meta{
-  display:flex;align-items:center;justify-content:space-between;
-  flex-wrap:wrap;gap:12px;margin-top:14px
-}
-
-/* Listados horizontales con buen gap */
-.links,.tags{display:flex;gap:12px;list-style:none;margin:0;padding:0;flex-wrap:wrap}
-
-/* Enlaces “Código/Demo/Ver proyecto” con subrayado discreto */
-.link{text-decoration:underline}
-.link:hover{text-decoration:none}
+  .card__title-link {
+    display: inline-block;
+    text-decoration: none;
+    border-bottom: 2px solid transparent;
+    transition: border-color .15s ease, color .15s ease;
+  }
+  .card__title-link:hover { border-color: currentColor; }
+  .card__title-link:focus-visible {
+    outline: 3px solid rgba(11,31,59,.25);
+    outline-offset: 2px;
+    border-color: transparent;
+    border-radius: 6px;
+  }
 </style>

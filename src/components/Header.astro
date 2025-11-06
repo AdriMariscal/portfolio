@@ -1,6 +1,6 @@
 ---
+// src/components/Header.astro
 const normalize = (p: string) => {
-  // Elimina barras finales repetidas; conserva la raíz "/"
   const s = p.replace(/\/+$/, "");
   return s === "" ? "/" : s;
 };
@@ -9,9 +9,7 @@ const current = normalize(Astro.url.pathname);
 
 const isActive = (href: string) => {
   const target = normalize(href);
-  const active =
-    current === target || current.startsWith(`${target}/`);
-  // Mantenemos 'true' para no tocar tu CSS; si no está activo, omitimos el atributo
+  const active = current === target || current.startsWith(`${target}/`);
   return active ? "true" : undefined;
 };
 ---

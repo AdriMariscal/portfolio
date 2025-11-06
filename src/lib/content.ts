@@ -1,36 +1,66 @@
 // src/lib/content.ts
-import { getCollection, type CollectionEntry } from 'astro:content';
+import { getCollection } from "astro:content";
 
-// ─────────────────────────────────────────────────────────────
-// PROYECTOS
-// ─────────────────────────────────────────────────────────────
-export async function getAllProjects(): Promise<CollectionEntry<'projects'>[]> {
-  const all = await getCollection('projects');
-  // orden opcional por "order" descendente si lo usas; si no existe, 0.
-  return all.sort(
-    (a, b) => (b.data.order ?? 0) - (a.data.order ?? 0),
+/** Nº total de proyectos (para la métrica del Hero) */
+export async function countProjects() {
+  const projects = await getCollection("projects");
+  return projects.length;
+}
+
+/** Proyectos destacados (para la sección Featured) */
+export async function getFeaturedProjects() {
+  const projects = await getCollection("projects");
+  return projects.filter((p) => p.data.featured === true);
+}
+
+/** Últimos posts (para “Últimos artículos” del index) */
+export async function getRecentPosts(limit = 3) {
+  const posts = await getCollection("blog");
+  const published = posts.filter((p) => !p.data.draft);
+  published.sort(
+    (a, b) =>
+      new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
   );
+  return published.slice(0, limit);
 }
 
-export async function getFeaturedProjects(): Promise<CollectionEntry<'projects'>[]> {
-  const all = await getAllProjects();
-  return all.filter((p) => p.data.featured === true);
-}
+export const toSlug = (s: string) =>
+  s
+    .normalize('NFD')
+    .replace(/\p{Diacritic}/gu, '')
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '');
 
-export async function countProjects(): Promise<number> {
-  const all = await getCollection('projects');
-  return all.length;
-}
+// Helpers puros y reutilizables
 
-// ─────────────────────────────────────────────────────────────
-// BLOG
-// ─────────────────────────────────────────────────────────────
-export async function getRecentPosts(limit = 3): Promise<CollectionEntry<'blog'>[]> {
-  const posts = await getCollection('blog');
-  posts.sort((a, b) => {
-    const da = new Date(a.data.date ?? 0).getTime();
-    const db = new Date(b.data.date ?? 0).getTime();
-    return db - da; // más nuevos primero
-  });
-  return posts.slice(0, limit);
+export const slugifyTag = (tag: string) =>
+  tag.toLowerCase().trim().replace(/\s+/g, '-');
+
+// Dado un referer y el origin del sitio, devuelve una URL interna segura para "Volver"
+export function computeBackHref(referer: string, siteOrigin = ''): string {
+  const isInternal =
+    referer.startsWith('/') ||
+    (siteOrigin && referer.startsWith(siteOrigin)) ||
+    referer.includes('/blog/') ||
+    referer.includes('/tags/');
+
+  function normalizeInternalRef(ref: string): string {
+    try {
+      if (ref.startsWith('/')) return ref;
+      const u = new URL(ref);
+      if (siteOrigin && u.origin === siteOrigin) {
+        return `${u.pathname}${u.search}${u.hash}`;
+      }
+      if (u.pathname?.startsWith('/blog') || u.pathname?.startsWith('/tags')) {
+        return `${u.pathname}${u.search}${u.hash}`;
+      }
+    } catch {
+      // si no es URL válida, caemos a /blog
+    }
+    return '/blog';
+  }
+
+  return isInternal ? normalizeInternalRef(referer) : '/blog';
 }

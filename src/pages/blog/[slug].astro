@@ -1,70 +1,111 @@
 ---
 // src/pages/blog/[slug].astro
-import BaseLayout from "../../layouts/BaseLayout.astro";
-import { getCollection, getEntryBySlug } from "astro:content";
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import type { CollectionEntry } from 'astro:content';
+import { getCollection } from 'astro:content';
+import { toSlug } from '@/lib/content';
+import { SITE } from '@/lib/config';
 
-/** Genera las rutas estáticas SOLO para posts */
 export async function getStaticPaths() {
-  const posts = await getCollection("blog", ({ data }) => data.published !== false);
-  return posts.map((p) => ({ params: { slug: p.slug } }));
+  const posts = await getCollection('blog', ({ data }) => !data.draft);
+  return posts.map((p) => ({
+    params: { slug: p.slug },
+    props: { post: p }
+  }));
 }
 
-const { slug } = Astro.params;
-if (!slug) throw new Error("Missing slug");
+const { post } = Astro.props as { post: CollectionEntry<'blog'> };
 
-const post = await getEntryBySlug("blog", slug);
-if (!post) throw new Error(`Post not found: ${slug}`);
-
+// Render del Markdown del post
 const { Content } = await post.render();
-const { title, description, tags = [], date } = post.data;
 
-/** Slug para enlaces de etiqueta (coincide con /tags/[tag].astro) */
-function tagSlug(s) {
-  return s
-    .toLowerCase()
-    .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // quita acentos
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "");
-}
+// Metadatos de la página
+const title = post.data.title ?? SITE.title;
+const description = post.data.description ?? SITE.description;
+const canonical = Astro.url?.href ?? new URL(`/blog/${post.slug}/`, SITE.url).href;
 
-const d = date ? new Date(date) : null;
-const when = d ? d.toLocaleDateString("es-ES") : "";
-const iso = d ? d.toISOString().split("T")[0] : "";
+// Imagen principal (absoluta): prioriza la del post si existe
+const rawImage = (post.data.image ?? post.data.heroImage ?? SITE.ogImage ?? '/og-default.png') as string;
+const imageAbs = rawImage?.startsWith('http') ? rawImage : new URL(rawImage, SITE.url).href;
+
+// Fechas del frontmatter (acepta Date o string)
+const toISO = (d: unknown) => {
+  if (!d) return undefined;
+  const dt = d instanceof Date ? d : new Date(String(d));
+  const t = dt.getTime();
+  return Number.isFinite(t) ? dt.toISOString() : undefined;
+};
+const datePublishedISO = toISO(post.data.date ?? null);
+const dateModifiedISO = toISO(post.data.updated ?? post.data.date ?? null);
+
+// Etiquetas (solo se mostrarán al final)
+const tags = Array.isArray(post.data.tags) ? post.data.tags : [];
+
+// JSON-LD Article
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": title,
+  "description": description,
+  "image": imageAbs,
+  "url": canonical,
+  "mainEntityOfPage": { "@type": "WebPage", "@id": canonical },
+  "inLanguage": SITE.lang ?? "es",
+  ...(datePublishedISO ? { "datePublished": datePublishedISO } : {}),
+  ...(dateModifiedISO ? { "dateModified": dateModifiedISO } : {}),
+  "author": { "@type": "Person", "name": SITE.author },
+  ...(tags.length ? { "keywords": tags.join(", ") } : {}),
+};
 ---
 
-<BaseLayout title={`${title} · Blog · Adrián Mariscal`} description={description} current="blog">
-  <section class="section post">
-    <div class="wrap">
-      <article class="card post__card">
-        <div class="card__body post__body">
-          <header class="post__header">
-            <h1 class="card__title post__title">{title}</h1>
+<BaseLayout title={title} description={description} ogImage={imageAbs} ogType="article">
+  <article class="section post">
+    <div class="wrap post__card card card--soft">
+      <div class="post__body">
+      <h1 class="post__title">{title}</h1>
 
-            {description && (
-              <p class="muted post__desc">{description}</p>
-            )}
+      {datePublishedISO ? (
+          <p class="post__date">
+          Publicado el <time datetime={datePublishedISO}>{new Date(datePublishedISO).toLocaleDateString('es-ES')}</time>
+          {dateModifiedISO && dateModifiedISO !== datePublishedISO
+            ? <> · Actualizado el <time datetime={dateModifiedISO}>{new Date(dateModifiedISO).toLocaleDateString('es-ES')}</time></>
+            : null}
+        </p>
+      ) : null}
 
-            {(d || tags.length) && (
-              <div class="post__meta">
-                {d && (
-                  <time datetime={iso} class="post__date">{when}</time>
-          )}
-          {tags.length ? (
-                  <ul class="tags tags--sm post__tags">
+        {/* Botón Volver con el mismo estilo que los botones de proyecto */}
+        <div class="post__actions" style="display:flex; gap:.5rem; flex-wrap:wrap; margin:.5rem 0 0">
+          <a class="btn btn--secondary btn--sm post__back" href="/blog" data-back>← Volver</a>
+        </div>
+
+        <div class="post__prose prose">
+      <Content />
+        </div>
+
+        {/* Etiquetas SOLO al final, como en projects/[slug].astro */}
+        {tags?.length ? (
+          <footer class="post__meta">
+            <ul class="tags tags--sm tags--mt" aria-label="Etiquetas">
               {tags.map((t) => (
-                <li><a class="tag" href={`/blog/tags/${tagSlug(t)}/`}>#{t}</a></li>
+                <li>
+                  <a class="tag" href={`/blog/tags/${toSlug(t)}/`}>#{t}</a>
+                </li>
               ))}
             </ul>
-          ) : null}
-              </div>
-            )}
-          </header>
-
-          <div class="prose post__prose">
-            <Content />
-          </div>
-        </div>
-      </article>
+          </footer>
+        ) : null}
+      </div>
     </div>
-  </section>
+  </article>
+
+  <!-- JSON-LD Article -->
+  <script type="application/ld+json">
+    {JSON.stringify(jsonLd)}
+  </script>
+
+  <!-- Fallback en cliente: si hay referer real, usamos ese para el botón -->
+  <script>
+    const a = document.querySelector('[data-back]');
+    if (a && document.referrer) a.setAttribute('href', document.referrer);
+  </script>
 </BaseLayout>

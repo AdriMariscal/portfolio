@@ -1,0 +1,89 @@
+---
+// src/pages/blog/tags/pages/[page].astro
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PostCard from '@/components/PostCard.astro';
+import { getCollection } from 'astro:content';
+import { toSlug } from '@lib/content';
+
+const PER_PAGE = 9;
+
+// Genera /blog/tags/{tag}/pages/1..N
+export async function getStaticPaths() {
+  const all = await getCollection('blog');
+
+  // ⚠️ Const LOCAL para el cálculo de totalPages
+  const PER_PAGE_LOCAL = 9;
+
+  // Agrupamos por tag (en slug)
+  const byTag = new Map<string, number>();
+  for (const p of all) {
+    for (const t of (p.data.tags ?? [])) {
+      const slug = toSlug(t);
+      byTag.set(slug, (byTag.get(slug) ?? 0) + 1);
+    }
+  }
+
+  const paths: Array<{ params: { tag: string; page: string }, props: any }> = [];
+  for (const [tag, count] of byTag) {
+    const totalPages = Math.max(1, Math.ceil(count / PER_PAGE_LOCAL));
+    for (let i = 1; i <= totalPages; i++) {
+      paths.push({
+        params: { tag, page: String(i) },
+        props: { tag, totalPages }
+      });
+    }
+  }
+  return paths;
+}
+
+const { tag, totalPages } = Astro.props as { tag: string, totalPages: number };
+
+const all = await getCollection('blog');
+
+// Coacción segura de fecha
+const toTime = (d: unknown): number => {
+  if (d instanceof Date) return d.getTime();
+  if (typeof d === 'string' && d) {
+    const t = new Date(d).getTime();
+    return Number.isNaN(t) ? 0 : t;
+  }
+  return 0;
+};
+
+const tagged = all
+  .filter((p) => (p.data.tags ?? []).map(toSlug).includes(tag))
+  .sort((a, b) => toTime(b.data?.date) - toTime(a.data?.date));
+
+const current = Math.max(1, Math.min(Number(Astro.params.page ?? 1), totalPages));
+const start = (current - 1) * PER_PAGE;
+const pagePosts = tagged.slice(start, start + PER_PAGE);
+
+const title = `#${tag}`;
+---
+
+<BaseLayout title={`${title} — página ${current}`} description={`Artículos con ${title}, página ${current} de ${totalPages}.`}>
+  <section class="container section">
+    <header class="section__header">
+      <h1 class="h1">{title}</h1>
+      <p class="lead">Página {current} de {totalPages}</p>
+    </header>
+
+    <div class="posts-grid">
+      {pagePosts.map((entry) => (<PostCard entry={entry} />))}
+    </div>
+
+    <nav class="pagination" aria-label={`Paginación de ${title}`}>
+      {current > 1 ? (
+        <a href={current === 2 ? `/blog/tags/${tag}` : `/blog/tags/${tag}/pages/${current - 1}`}>← Anterior</a>
+      ) : (
+        <span>← Anterior</span>
+      )}
+      <span class="is-active">{current}</span>
+      {current < totalPages ? (
+        <a href={`/blog/tags/${tag}/pages/${current + 1}`}>Siguiente →</a>
+      ) : (
+        <span>Siguiente →</span>
+      )}
+    </nav>
+  </section>
+</BaseLayout>
