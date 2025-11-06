@@ -1,63 +1,65 @@
 ---
-// src/pages/tags/[tag].astro
-import BaseLayout from '../../../layouts/BaseLayout.astro';
-import PostCard from '../../../components/PostCard.astro';
+// src/pages/blog/tags/[tag].astro
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PostCard from '@/components/PostCard.astro';
 import { getCollection } from 'astro:content';
+import { toSlug } from '@lib/content';
 
-// Genera una página estática por cada etiqueta encontrada en los posts
+const PER_PAGE = 9;
+
+// Normaliza fechas
+const toTime = (d: unknown) => {
+  if (!d) return 0;
+  const dt = d instanceof Date ? d : new Date(String(d));
+  const t = dt.getTime();
+  return Number.isFinite(t) ? t : 0;
+};
+
+// Rutas estáticas por etiqueta (solo página 1 aquí)
 export async function getStaticPaths() {
-  const posts = await getCollection('blog', ({ data }) => data.published !== false);
-  const slugs = new Set<string>();
+  const all = await getCollection('blog', ({ data }) => (data.published ?? true) && !data.draft);
 
-  for (const p of posts) {
-    const t = Array.isArray(p.data.tags) ? p.data.tags : [];
-    for (const tag of t) {
-      // Usa la misma "regla de slug" que PostCard: encodeURIComponent + toLowerCase
-      slugs.add(encodeURIComponent(String(tag).toLowerCase()));
-    }
-  }
+  const tagSet = new Set<string>();
+  for (const p of all) for (const t of (p.data.tags ?? [])) tagSet.add(toSlug(t));
 
-  return [...slugs].map((s) => ({ params: { tag: s } }));
+  return Array.from(tagSet).map((tag) => ({
+    params: { tag },
+  }));
 }
 
-// Parámetro de ruta (slug ya en minúsculas/URI-safe)
 const { tag } = Astro.params;
-const target = String(tag ?? '').toLowerCase();
 
-// Carga y filtra posts por etiqueta (case-insensitive) usando la misma regla de slug
-const all = await getCollection('blog', ({ data }) => data.published !== false);
-const entries = all
-  .filter((entry) => {
-    const tags = Array.isArray(entry.data.tags) ? entry.data.tags : [];
-    return tags.some(
-      (t) => encodeURIComponent(String(t).toLowerCase()) === target
-    );
-  })
-  .sort((a, b) => {
-    const da = new Date(a.data.date ?? 0).getTime();
-    const db = new Date(b.data.date ?? 0).getTime();
-    return db - da; // más nuevos primero
-  });
+// Filtra por etiqueta (match por slug), solo publicados, y ordena desc por fecha
+const allPosts = await getCollection('blog', ({ data }) => (data.published ?? true) && !data.draft);
+const posts = allPosts
+  .filter((p) => (p.data.tags ?? []).map(toSlug).includes(tag!))
+  .sort((a, b) =>
+    toTime(b.data.date ?? b.data.pubDate ?? b.data.updatedDate) -
+    toTime(a.data.date ?? a.data.pubDate ?? a.data.updatedDate)
+  );
 
-// 9 últimos (mismo patrón visual que el índice del blog)
-const latest = entries.slice(0, 9);
-const label = decodeURIComponent(target);
+const totalPages = Math.max(1, Math.ceil(posts.length / PER_PAGE));
+const pagePosts = posts.slice(0, PER_PAGE);
+
+const title = `#${tag}`;
+const description = `Artículos con la etiqueta ${title}`;
 ---
 
-<BaseLayout title={`#${label} · Blog`}>
-  <main class="section">
-    <div class="wrap">
-      <h1 class="h2" style="font-size:2rem;margin-bottom:18px">#{label}</h1>
+<BaseLayout title={title} description={description}>
+  <section class="container section">
+    <header class="section__header">
+      <h1 class="h1">{title}</h1>
+      <p class="lead">Artículos con la etiqueta <strong>{title}</strong>.</p>
+    </header>
 
-      {latest.length === 0 ? (
-        <p>No hay artículos con esta etiqueta todavía.</p>
-      ) : (
-        <div class="posts-grid">
-          {latest.map((entry) => (
-            <PostCard entry={entry} maxTags={4} />
-          ))}
+      <div class="posts-grid">
+      {pagePosts.map((entry) => (<PostCard entry={entry} />))}
       </div>
-      )}
-    </div>
-  </main>
+
+    {totalPages > 1 && (
+      <nav class="pagination" aria-label={`Paginación de la etiqueta ${title}`}>
+        <a href={`/blog/tags/${tag}/page/2`}>Siguiente →</a>
+      </nav>
+    )}
+  </section>
 </BaseLayout>

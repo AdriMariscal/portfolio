@@ -11,3 +11,9 @@
 
 [context."branch:staging".environment]
   ENVIRONMENT = "staging"
+
+[[redirects]]
+  from = "/blog/page/:splat"
+  to = "/blog/pages/:splat"
+  status = 301
+  force = true

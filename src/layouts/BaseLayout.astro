@@ -1,26 +1,72 @@
 ---
+// src/layouts/BaseLayout.astro
 import "../styles/global.css";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
+import { SITE, THEME } from "../lib/config";
+
+type Props = {
+  title?: string;
+  description?: string;
+  ogImage?: string;    // permite sobreescribir la imagen OG por página
+  ogType?: string;     // opcional: 'article' para posts
+};
 
 const {
   title = "Adrián Mariscal",
   description = "Arquitecto Salesforce y desarrollo web ligero.",
-} = Astro.props as { title?: string; description?: string };
+  ogImage,
+  ogType,
+} = Astro.props as Props;
+
+// Canonical absoluto de la URL actual
+const canonical = Astro.url?.href ?? new URL("/", SITE.url).href;
+
+// Detecta tipo automáticamente: 'article' en /blog/*, 'website' en el resto
+const autoType = Astro.url?.pathname?.startsWith("/blog/") ? "article" : "website";
+const type = ogType ?? autoType;
+
+// Imagen OG (absoluta): prioriza prop > config por defecto
+const rawImage = ogImage ?? SITE.ogImage ?? "/og-default.png";
+const ogImageAbs = rawImage.startsWith("http")
+  ? rawImage
+  : new URL(rawImage, SITE.url).href;
+
+// Locale + site name
+const locale = "es_ES";
+const siteName = SITE.siteName ?? "Portfolio - Adrián Mariscal";
 ---
 
 <!doctype html>
-<html lang="es">
+<html lang={SITE.lang ?? "es"}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title} — Adrián Mariscal</title>
     <meta name="description" content={description} />
+    <meta name="theme-color" content={THEME.color} />
     <link rel="icon" href="/favicon.svg" />
+    <link rel="canonical" href={canonical} />
+
+    <!-- Open Graph -->
+    <meta property="og:locale" content={locale} />
+    <meta property="og:site_name" content={siteName} />
+    <meta property="og:type" content={type} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImageAbs} />
+    <meta property="og:image:alt" content={title} />
+
+    <!-- Twitter (compatible con X/Twitter cards) -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageAbs} />
   </head>
   <body>
     <Header />
-    <main class="main">
+    <main>
       <slot />
     </main>
     <Footer />

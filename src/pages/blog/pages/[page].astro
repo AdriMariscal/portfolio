@@ -1,0 +1,72 @@
+---
+// src/pages/blog/pages/[page].astro
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PostCard from '@/components/PostCard.astro'; 
+import { getCollection } from 'astro:content';
+
+const PER_PAGE = 9; // usado para el slice fuera de getStaticPaths
+
+// Genera /blog/pages/1, /blog/pages/2, …
+export async function getStaticPaths() {
+  const all = await getCollection('blog');
+
+  // ⚠️ Const LOCAL para evitar cualquier sombra/ámbito raro en compilado
+  const PER_PAGE_LOCAL = 9;
+
+  // Coacción segura de fecha (acepta Date | string | undefined)
+  const toTime = (d: unknown): number => {
+    if (d instanceof Date) return d.getTime();
+    if (typeof d === 'string' && d) {
+      const t = new Date(d).getTime();
+      return Number.isNaN(t) ? 0 : t;
+    }
+    return 0;
+  };
+
+  // Orden descendente por fecha (usando coacción)
+  const posts = all.sort((a, b) => toTime(b.data?.date) - toTime(a.data?.date));
+
+  const totalPages = Math.max(1, Math.ceil(posts.length / PER_PAGE_LOCAL));
+
+  return Array.from({ length: totalPages }, (_, i) => ({
+    params: { page: String(i + 1) },
+    props: { totalPages, posts },
+  }));
+}
+
+const { posts, totalPages } = Astro.props as {
+  posts: Awaited<ReturnType<typeof getCollection>>;
+  totalPages: number;
+};
+
+const current = Math.max(1, Math.min(Number(Astro.params.page ?? 1), totalPages));
+const start = (current - 1) * PER_PAGE;
+const pagePosts = posts.slice(start, start + PER_PAGE);
+---
+
+<BaseLayout title={`Blog — página ${current}`} description="Artículos del blog paginados.">
+  <section class="container section">
+    <header class="section__header">
+      <h1 class="h1">Blog</h1>
+      <p class="lead">Página {current} de {totalPages}</p>
+    </header>
+
+    <div class="posts-grid">
+      {pagePosts.map((entry) => (<PostCard entry={entry} />))}
+    </div>
+
+    <nav class="pagination" aria-label="Paginación del blog">
+      {current > 1 ? (
+        <a href={current === 2 ? '/blog' : `/blog/pages/${current - 1}`} aria-label="Anterior">← Anterior</a>
+      ) : (
+        <span>← Anterior</span>
+      )}
+      <span class="is-active">{current}</span>
+      {current < totalPages ? (
+        <a href={`/blog/pages/${current + 1}`} aria-label="Siguiente">Siguiente →</a>
+      ) : (
+        <span>Siguiente →</span>
+      )}
+    </nav>
+  </section>
+</BaseLayout>
