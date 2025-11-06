@@ -11,6 +11,9 @@ const PER_PAGE = 9;
 export async function getStaticPaths() {
   const all = await getCollection('blog');
 
+  // ⚠️ Const LOCAL para el cálculo de totalPages
+  const PER_PAGE_LOCAL = 9;
+
   // Agrupamos por tag (en slug)
   const byTag = new Map<string, number>();
   for (const p of all) {
@@ -22,7 +25,7 @@ export async function getStaticPaths() {
 
   const paths: Array<{ params: { tag: string; page: string }, props: any }> = [];
   for (const [tag, count] of byTag) {
-    const totalPages = Math.max(1, Math.ceil(count / PER_PAGE));
+    const totalPages = Math.max(1, Math.ceil(count / PER_PAGE_LOCAL));
     for (let i = 1; i <= totalPages; i++) {
       paths.push({
         params: { tag, page: String(i) },
@@ -52,8 +55,8 @@ const tagged = all
   .sort((a, b) => toTime(b.data?.date) - toTime(a.data?.date));
 
 const current = Math.max(1, Math.min(Number(Astro.params.page ?? 1), totalPages));
-const start = (current - 1) * 9;
-const pagePosts = tagged.slice(start, start + 9);
+const start = (current - 1) * PER_PAGE;
+const pagePosts = tagged.slice(start, start + PER_PAGE);
 
 const title = `#${tag}`;
 ---
