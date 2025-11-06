@@ -1,7 +1,7 @@
 ---
 // src/pages/blog/pages/[page].astro
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import PostCard from '@/components/PostCard.astro';
+import PostCard from '@/components/PostCard.astro'; 
 import { getCollection } from 'astro:content';
 
 const PER_PAGE = 9;
@@ -9,8 +9,20 @@ const PER_PAGE = 9;
 // Genera /blog/page/1, /blog/page/2, …
 export async function getStaticPaths() {
   const all = await getCollection('blog');
-  // Orden descendente por fecha
-  const posts = all.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+
+  // Coacción segura de fecha (acepta Date | string | undefined)
+  const toTime = (d: unknown): number => {
+    if (d instanceof Date) return d.getTime();
+    if (typeof d === 'string' && d) {
+      const t = new Date(d).getTime();
+      return Number.isNaN(t) ? 0 : t;
+    }
+    return 0;
+  };
+
+  // Orden descendente por fecha (usando coacción)
+  const posts = all.sort((a, b) => toTime(b.data?.date) - toTime(a.data?.date));
+
   const totalPages = Math.max(1, Math.ceil(posts.length / PER_PAGE));
 
   return Array.from({ length: totalPages }, (_, i) => ({
