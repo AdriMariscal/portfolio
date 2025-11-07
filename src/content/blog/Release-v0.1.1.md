@@ -7,7 +7,9 @@ date: 2025-10-30
 ---
 
 Acabo de publicar **v0.1.1** de mi web/portfolio: <https://adrianmariscal.netlify.app>.  
-Es una versión **MVP** enfocada en tener la estructura sólida para iterar rápido.
+Es la **primera versión en producción** y mi punto de partida para consolidar un portfolio público.
+
+Mi objetivo con este MVP es doble: por un lado disponer de un sitio rápido y estático donde pueda **mostrar proyectos reales**, y por otro experimentar con **Astro y Netlify** para construir una base técnica robusta. Para los clientes potenciales y la comunidad dev, esto supone un ejemplo práctico de mis conocimientos de arquitectura web, devops y SEO.
 
 ## Qué incluye
 
@@ -31,11 +33,12 @@ Es una versión **MVP** enfocada en tener la estructura sólida para iterar ráp
 ## Estado actual
 
 Funcionalidad completa para:
-- Publicar proyectos y artículos rápidamente.
-- Probar cambios en **staging** antes de subir a **producción**.
-- Recibir mensajes desde el formulario (con protección básica anti-spam).
+- Publicar proyectos y artículos rápidamente gracias a las **content collections** tipadas y a las rutas dinámicas.
+- Probar cambios en **staging** antes de subir a **producción** mediante ramas `dev`/`staging`/`main` y despliegues automáticos.
+- Recibir mensajes desde el formulario (con protección básica anti‑spam mediante honeypot).
+- Garantizar una base de **SEO** mínima (títulos, descripciones, metadatos) y una estructura de enlaces amigable.
 
-## Próximo objetivo (v0.1.2)
+## Próximo objetivo
 
 - **Aplicar la nueva guía de marca** (colores, tipografías, componentes).
 - Mejorar **estilos de navegación y tarjetas**.
