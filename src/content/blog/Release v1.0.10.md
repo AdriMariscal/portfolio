@@ -1,7 +1,7 @@
 ---
 title: "Release v1.0.10 — Astro 4, paginación de blog y SEO avanzado"
 description: Migración a Astro v4 con content collections tipadas, paginación de posts y etiquetas, nuevo sistema de diseño (Hero, ProjectCard y PostCard), mejoras de SEO y accesibilidad y utilidades para escalar."
-tags: ["release-notes", "astro", "portfolio", "seo", "pagination", "design-system", "content-collections"]
+tags: ["release-notes", "astro", "portfolio", "seo", "pagination"]
 published: true
 date: 2025-11-06
 ---

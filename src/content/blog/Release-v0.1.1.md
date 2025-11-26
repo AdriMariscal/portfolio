@@ -6,7 +6,7 @@ published: true
 date: 2025-10-30
 ---
 
-Acabo de publicar **v0.1.1** de mi web/portfolio: <https://adrianmariscal.netlify.app>.  
+Acabo de publicar **v0.1.1** de mi web/portfolio: <https://adrianmariscal.es/>.  
 Es la **primera versión en producción** y mi punto de partida para consolidar un portfolio público.
 
 Mi objetivo con este MVP es doble: por un lado disponer de un sitio rápido y estático donde pueda **mostrar proyectos reales**, y por otro experimentar con **Astro y Netlify** para construir una base técnica robusta. Para los clientes potenciales y la comunidad dev, esto supone un ejemplo práctico de mis conocimientos de arquitectura web, devops y SEO.
@@ -47,4 +47,4 @@ Funcionalidad completa para:
 
 ---
 
-Si te interesa el detalle técnico o has visto algún fallo, ¡déjamelo en comentarios o escríbeme por el formulario!
+Si te interesa el detalle técnico o has visto algún fallo, ¡escríbeme por el formulario!

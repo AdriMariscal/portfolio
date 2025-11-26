@@ -3,7 +3,7 @@ title: "¿Qué es Salesforce? Guía clara para negocio y desarrolladores"
 description: "Salesforce explicado sin humo: qué es, para qué sirve, sus nubes principales (Sales, Service, Marketing…) y cómo empezar sin perderse."
 tags: ["salesforce", "crm", "nube", "negocio", "desarrollo"]
 published: true
-date: 2025-10-31
+date: 2025-10-30
 ---
 
 **Salesforce** es, a la vez, un **CRM en la nube** y una **plataforma para construir aplicaciones de negocio**. 
