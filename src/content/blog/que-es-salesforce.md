@@ -85,8 +85,8 @@ Salesforce tiene muchas “piezas” o “nubes”. No necesitas conocerlas toda
 
 Además, Salesforce se apoya en otras piezas como:
 
-- **Tableau** (informes y gráficos avanzados),
-- **MuleSoft** (conectar sistemas entre sí) y  
+- **Tableau** (informes y gráficos avanzados).
+- **MuleSoft** (conectar sistemas entre sí).  
 - **Slack** (comunicación interna del equipo).
 
 Lo importante: **empiezas normalmente por una de estas nubes** (ventas o servicio) y vas ampliando según lo necesites, no hace falta comprarlo todo desde el primer día.
@@ -104,10 +104,10 @@ Salesforce no es solo para grandes multinacionales. Puede tener sentido si:
 
 Suele encajar bien en:
 
-- Pymes B2B (empresas que venden a otras empresas),
-- empresas de servicios (consultorías, agencias, soporte técnico, academias, etc.),
-- e-commerce con cierto volumen,
-- negocios que necesitan un **historial completo de cada cliente**.
+- Pymes B2B (empresas que venden a otras empresas).
+- empresas de servicios (consultorías, agencias, soporte técnico, academias, etc.).
+- e-commerce con cierto volumen.
+- Negocios que necesitan un **historial completo de cada cliente**.
 
 ---
 
@@ -171,9 +171,9 @@ Si te planteas Salesforce para tu empresa, una forma sensata de empezar es:
 
 2. **Hacer una lista de procesos clave**  
    Por ejemplo:
-   - Cómo entra un nuevo cliente,
-   - qué pasos sigue hasta la venta,
-   - cómo se atienden las incidencias.
+   - Cómo entra un nuevo cliente.
+   - Qué pasos sigue hasta la venta.
+   - Cómo se atienden las incidencias.
 
 3. **Pedir una demo o prueba guiada**  
    Ver la herramienta con tus propios procesos en mente ayuda mucho a decidir.
@@ -184,7 +184,7 @@ Si te planteas Salesforce para tu empresa, una forma sensata de empezar es:
 
 5. **Medir resultados**  
    Antes de empezar, piensa qué vas a medir:  
-   más ventas, menos tiempo en tareas administrativas, menos incidencias perdidas, etc.
+   Más ventas, menos tiempo en tareas administrativas, menos incidencias perdidas, etc.
 
 ---
 
@@ -192,15 +192,15 @@ Si te planteas Salesforce para tu empresa, una forma sensata de empezar es:
 
 Si te interesan los detalles, Salesforce es una **plataforma en la nube** donde la información se organiza en:
 
-- **Objetos** (por ejemplo, “Cuenta”, “Contacto”, “Oportunidad”),  
-- cada objeto tiene **campos** (nombre, teléfono, fecha, importe…),  
-- y cada cliente o venta es un **registro** dentro de esos objetos.
+- **Objetos** (por ejemplo, “Cuenta”, “Contacto”, “Oportunidad”).
+- Cada objeto tiene **campos** (nombre, teléfono, fecha, importe…).
+- Y cada cliente o venta es un **registro** dentro de esos objetos.
 
 Además permite:
 
-- **Automatizar tareas** sin programar (con flujos y reglas),
-- añadir código cuando hace falta algo muy a medida,
-- conectarse con otras herramientas (contabilidad, facturación, webs, etc.).
+- **Automatizar tareas** sin programar (con flujos y reglas).
+- Añadir código cuando hace falta algo muy a medida.
+- Conectarse con otras herramientas (contabilidad, facturación, webs, etc.).
 
 Pero si todo esto te suena a chino, no pasa nada: lo importante es que entiendas que **es flexible** y que **se puede adaptar a cómo trabajáis**.
 
@@ -216,5 +216,4 @@ Si te ronda la idea de implantar Salesforce o mejorar una organización que ya t
 
 ---
 
-¿Quieres que valore si Salesforce encaja en tu empresa o que te ayude a optimizar tu org actual?  
-**[Escríbeme](/contact)**.
+¿Quieres que valore si Salesforce encaja en tu empresa o que te ayude a optimizar tu org actual? **[Escríbeme](/contact)**.
